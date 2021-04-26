@@ -1,0 +1,24 @@
+# A Sample Reading List
+
+Year    Topic     Paper
+-----   ------    ----------
+2000        3     Thinking about Mechanisms
+2001       17     Knowing How
+2002      201     Evidence, Pragmatics and Justification (three co-authored papers in a row)
+2003        7     Future Contingents and Relative Truth
+2004        8     The Limits of Self-Awareness
+2005       29     Responsibility for Attitudes
+2006       15     A Darwinian Dilemma
+2007      204     Epistemology of Disagreement/Reflection and Disagreement (pick one)
+2008       24     Alief and Belief
+2009       25     Moral Testimony and Moral Epistemology
+2010        5     Acting For The Right Reasons
+2011        6     By Our Bootstraps
+2012      203     Anti-Luck Virtue Epistemology
+2013       26     Two Flavors of Curry's Paradox
+2014       38     Conceptualizing Epistemic Oppression
+2015      126     What You Can't Expect When You're Expecting
+2016      122     The Self-Evidencing Brain
+2017       39     On Fraud
+2018      114     David Lewis in the lab: experimental results on the emergence of meaning
+2019       45     Against "Transracialism": Revisiting The Debate 

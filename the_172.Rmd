@@ -1,0 +1,154 @@
+# (APPENDIX) Appendix {-} 
+
+# The 172 Topics
+
+Auto-generates topics. Include some description of each
+
+```{r topic-loop, fig.height = 4.5}
+require(scales)
+require(patchwork)
+
+graph_color <- function(x){
+  case_when(x == "Aesthetics" ~ hcl(h = 15, l = 65, c = 100),
+            x == "Epistemology" ~ hcl(h = 45, l = 65, c = 100),
+            x == "Ethics" ~ hcl(h = 75, l = 65, c = 100),
+            x == "Free Will" ~ hcl(h = 105, l = 65, c = 100),
+            x == "Kant" ~ hcl(h = 135, l = 65, c = 100),
+            x == "Language" ~ hcl(h = 165, l = 65, c = 100),
+            x == "Logic" ~ hcl(h = 195, l = 65, c = 100),
+            x == "Metaphysics" ~ hcl(h = 225, l = 65, c = 100),
+            x == "Mind" ~ hcl(h = 255, l = 65, c = 100),
+            x == "Political" ~ hcl(h = 285, l = 65, c = 100),
+            x == "Science" ~ hcl(h = 315, l = 65, c = 100))
+}
+
+#for (jjj in 1:nrow(topics_big_table)){
+for (jjj in 1:22){
+  the_cat <- topics_big_table$cat_num[jjj]
+  target_articles <- round_three %>% filter(cat_num == the_cat)
+  active_precursors <- precursors %>% filter(cat_num == the_cat)
+  category_properties <- category_years %>% filter(cat_num == the_cat)
+  
+  cat(" \n\n")
+  cat("## ",category_properties$cat_real_name[1], "{-#t-",category_properties$cat_shortcode,"}",sep="")  
+  
+  cat(" \n\n")
+  cat("**Field**: ",category_properties$cat_field, sep = "")
+  
+  cat(" \n\n")
+  cat("**Topic Size**")
+  
+  category_size <- tribble(
+    ~Articles, ~Citations, ~`Mean Citations`, ~Rank,
+    round(category_properties$n[1], 1),
+    round(category_properties$c[1], 1), 
+    round(category_properties$mean_cite[1], 2),
+    category_properties$mean_cite_rank
+  )
+  
+  print(kable(category_size, align=rep('c', 4)) %>% 
+    kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive")) %>% 
+    row_spec(1, background = "#f8f8f8"))
+  
+  cat(" \n\n")
+  cat("**Topic Age**")
+  
+  category_age <- tribble(
+    ~`Mean Year`, ~`Relative Age`, ~`Relative Age in Group`,
+    round(category_properties$y[1], 2),
+    ordinal(category_properties$y_rank[1]),
+    ordinal(category_properties$class_y_rank[1])
+  )
+  
+  print(kable(category_age, align=rep('c', 3)) %>% 
+    kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive")) %>% 
+    row_spec(1, background = "#f8f8f8"))
+  
+  cat("**Highly Cited Articles** \n \n")
+  cat("::: apa-reference \n\n")  
+  for (jj in 1:20){
+    cat(target_articles$longcite[jj], " \n\n", sep="")
+  }
+  cat(":::\n\n")
+
+  cat("<br>")
+  cat("**Precursors** \n \n")
+  cat("::: apa-reference \n\n")  
+  for (jj in 1:nrow(active_precursors)){
+    cat(active_precursors$longcite[jj], " \n\n", sep="")
+  }
+  cat(":::\n\n")
+  cat("<br>")
+
+
+  journal_distribution <- target_articles %>%
+    group_by(journal) %>%
+    tally(wt = s) %>%
+    arrange(-n) %>%
+    mutate(n = round(n, 2)) %>%
+    slice(1:10)
+
+  cat("**Most Frequent Journals**")
+  
+  print(kable(journal_distribution,
+          col.names = c("Journal", "Number of Articles")))
+  
+  year_distribution <- target_articles %>% 
+    group_by(year) %>% 
+    tally(wt = s) %>% 
+    arrange(year) %>% 
+    left_join(year_totals, by = "year") %>% 
+    mutate(r = n / total)
+    
+  journal_distribution <- pie_chart_data %>% 
+    filter(cat_num == the_cat) %>% 
+    mutate(fraction = cat_type / sum(cat_type),
+           ymax = cumsum(fraction),
+           ymin = c(0, head(ymax, n=-1)),
+           labelPosition = (ymax + ymin) / 2,
+           label = case_when(fraction < 0.05 ~ "",
+                              TRUE ~ paste0(type, "\n", round(cat_type,0))),
+           lab_size = case_when(fraction < 0.05 ~ 0,
+                                TRUE ~ 0))
+  
+    p1 <- ggplot(year_distribution, aes(x = year, y = r)) + 
+          geom_point(color = graph_color(category_properties$cat_field[1])) + 
+          scale_y_continuous(labels = scales::label_percent(accuracy =0.5), limits = c(0, NA)) +
+          theme_minimal() +
+          ggtitle("Topic Frequency by Year") +
+          theme(text = element_text(family="Lato"),
+                plot.title = element_text(size = rel(1),
+                                          family = "Lato",
+                                          face = "bold",
+                                          margin = margin(0, 0, 10, 0)),
+                axis.title.x=element_blank(),
+                axis.title.y=element_blank(),
+                strip.text = element_blank(),
+                panel.spacing.x = unit(-0.05, "lines"),
+                panel.background = element_blank(),
+                panel.spacing.y = unit(1, "lines"),
+                panel.grid.major.y = element_line(color = "grey85", size = 0.07),
+                panel.grid.minor.y = element_line(color = "grey85", size = 0.03),
+                panel.grid.major.x = element_blank(),
+                panel.grid.minor.x = element_blank(),
+                legend.position="none",
+                plot.margin = margin(l = 20))
+
+    p2 <- ggplot(journal_distribution, aes(ymax=ymax, ymin=ymin, xmax=4, xmin=3, fill=type)) +
+          geom_rect() +
+          ggtitle("Distribution across Journal Types") +
+          geom_text(x=3.5, aes(y=labelPosition, label=label, size = 0)) +
+          scale_fill_brewer(palette="Set2") +
+          coord_polar(theta="y") +
+          xlim(c(2, 4)) +
+          theme_void() +
+          theme(legend.position = "none",
+                plot.title = element_text(size = rel(1),
+                                          family = "Lato",
+                                          face = "bold",
+                                          margin = margin(0, 0, 10, 0)))
+    
+    print(p1 + p2)
+  
+}
+```

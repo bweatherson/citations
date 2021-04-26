@@ -1,0 +1,465 @@
+--- 
+title: "A History of Philosophy Journals"
+subtitle: "Volume 2: Evidence from Citation Data, 2000-2019"
+author: "Brian Weatherson"
+date: "Marshall M. Weinberg Professor of Philosophy <br> University of Michigan, Ann Arbor"
+documentclass: book
+link-citations: yes
+site: bookdown::bookdown_site
+description: Building models of the trends in philosophy journals using LDA.
+always_allow_html: true
+---
+
+# Introduction {-}
+
+```{r packages, echo=FALSE, message = FALSE, warning = FALSE, cache=FALSE}
+knitr::opts_chunk$set(dpi=288)
+knitr::opts_chunk$set(echo=FALSE)
+knitr::opts_chunk$set(cache=TRUE)
+knitr::opts_chunk$set(message=FALSE)
+knitr::opts_chunk$set(warning=FALSE)
+knitr::opts_chunk$set(fig.height = 8.2)
+knitr::opts_chunk$set(fig.width = 7.5)
+knitr::opts_chunk$set(results='asis')
+
+knitr::knit_hooks$set(inline = function(x) {
+  prettyNum(x, big.mark=",")
+})
+
+require(tidyverse)
+require(igraph)
+require(DT)
+require(kableExtra)
+
+options(dplyr.summarise.inform = FALSE)
+```
+
+```{r loader}
+# Burp
+require(readxl)
+philo_bib <- read_excel("philo_bib_edit.xlsx")
+
+philo_bib <- philo_bib %>% 
+  mutate(temp = substr(title,nchar(title),nchar(title))) %>% 
+  mutate(adj_title = case_when(temp %in% c(".", "!", "?") ~ title,
+                               TRUE ~ paste0(title,"."))) %>% 
+  mutate(longcite = paste0(author, ". ", year, ". \"",adj_title,"\" _",journal, "_ ",bib,".")) %>% 
+  select(-temp, -adj_title)
+
+load("philo_cite.RData")
+
+require(readr)
+journal_type <- read_csv("journal_type.csv")
+
+set.seed(14071789)
+```
+
+```{r initial-setup}
+modern_philo_bib <- philo_bib %>% 
+  filter(year >= 2000, year < 2020)
+
+extended_philo_bib <- philo_bib %>% 
+  filter(year >= 1992, year < 2020)
+
+modern_philo_cite <- philo_cite %>% 
+  filter(id %in% modern_philo_bib$id) %>% 
+  filter(refs %in% extended_philo_bib$id)
+
+cite_counts <- modern_philo_cite %>%
+  group_by(refs) %>%
+  tally() 
+
+extended_philo_bib <- extended_philo_bib %>% 
+  left_join(cite_counts, by = c("id" = "refs")) %>%
+  mutate_at("n", ~replace(., is.na(.), 0))
+
+high_cited <- cite_counts %>% 
+  filter(n >= 0) %>%
+  arrange(-n) %>% 
+  rowid_to_column(var = "myid")
+
+mycodes <- high_cited %>% 
+  select(myid, refs)
+
+extended_philo_bib <- extended_philo_bib %>% 
+  left_join(mycodes, by = c("id" = "refs")) %>%
+  mutate_at("myid", ~replace(., is.na(.), 10^6)) %>% 
+  arrange(myid) %>% 
+  rowid_to_column("xxx") %>% 
+  mutate(myid = xxx) %>% 
+  select(-xxx) %>% 
+  select(myid, everything()) %>% 
+  rename(cite_count = n)
+```
+
+```{r relabel-citations}
+id_list <- extended_philo_bib %>% 
+  select(myid, id)
+
+citations_myid <- modern_philo_cite %>% 
+  left_join(id_list, by = "id") %>% 
+  rename(article = myid) %>% 
+  left_join(id_list, by = c("refs" = "id")) %>% 
+  rename(citation = myid) %>% 
+  select(article, citation)
+```
+
+```{r generate-cocitation}
+has_two_refs <- citations_myid %>%
+  filter(citation %in% high_cited$myid) %>% 
+  group_by(article) %>% 
+  tally() %>% 
+  filter(n > 1)
+
+full_cocitation <- citations_myid %>%
+  filter(citation %in% high_cited$myid) %>%
+  filter(article %in% has_two_refs$article) %>% 
+  group_by(article) %>%
+  arrange(article, citation) %>%
+  do(data.frame(t(combn(.$citation, 2))))
+```
+
+```{r generate-graph}
+graph_input <- full_cocitation %>%
+  group_by(X1, X2) %>%
+  tally() %>%
+  rename(weight = n) 
+
+graph_input_short <- graph_input %>% filter(weight >= 3)
+
+the_graph <- graph_from_data_frame(graph_input_short, directed = FALSE)
+```
+
+```{r generate-clusters}
+the_clusters <- cluster_walktrap(the_graph)
+```
+
+```{r describe-clusters}
+the_categories <- membership(the_clusters) %>%
+  enframe() %>%
+  mutate(myid = as.numeric(name)) %>% 
+  select(-name) %>% 
+  left_join(extended_philo_bib, by = "myid") %>%
+  arrange(-cite_count, value) 
+
+the_categories$value <- as.numeric(the_categories$value)
+
+category_sum <- the_categories %>%
+  mutate(new = case_when(year < 2000 ~ 0,
+                         TRUE ~ 1)) %>% 
+  group_by(value) %>% 
+  tally(wt=cite_count * new) %>%
+  arrange(-n) %>%
+  rowid_to_column("cat_num") %>% 
+  rename(cat_size = n)
+
+#good_categories <- c(4:87, 89, 99, 101, 102, 110, 119, 136)
+#good_categories <- 1:2000
+
+the_categories <- the_categories %>% 
+  left_join(category_sum, by = "value") %>% 
+  select(-value) %>% 
+  select(myid, cat_num, longcite, year, journal, cite_count, cat_size, everything()) %>% 
+  filter(is.na(cat_num) == FALSE) 
+
+epi_articles <- filter(the_categories, cat_num %in% c(1, 2, 4))$myid
+# Gotta put this here for safe keeping, since these now get filtered out at the next step
+# Also probability is now cat 4 because of weighting by citations of post-2000 articles
+
+the_categories <- filter(the_categories, cat_size >= 75, cat_num >= 3, cat_num != 4)
+```
+
+```{r epistemology-categories}
+epi_cocite <- full_cocitation %>% 
+  filter(X1 %in% epi_articles, X2 %in% epi_articles)
+
+epi_graph_input <- epi_cocite %>%
+  group_by(X1, X2) %>%
+  tally() %>%
+  rename(weight = n) 
+
+epi_graph_input_short <- epi_graph_input %>% filter(weight >= 4)
+# Note that used 4 rather than 3 here because turning down resolution gave more intuitive clusters
+
+epi_graph <- graph_from_data_frame(epi_graph_input_short, directed = FALSE)
+
+epi_clusters <- cluster_fast_greedy(epi_graph)
+# Note different clustering algorithm
+# Using walktrap found a cluster that looked more like mind than epistemology
+# But it put norms back in with contextualism
+# I like this better all things considered because norms becomes a topic, and contextualism is a cleaner topic
+# And it is always hard to see what's going on with perception anyway
+# All of the ways of doing this found a metaphysics topic about chance
+# And they almost all found testimony topics
+
+epi_categories <- membership(epi_clusters) %>%
+  enframe() %>%
+  mutate(myid = as.numeric(name)) %>% 
+  select(-name) %>% 
+  left_join(extended_philo_bib, by = "myid") %>%
+  arrange(-cite_count, value) 
+
+epi_categories$value <- as.numeric(epi_categories$value)
+
+epi_category_sum <- epi_categories %>%
+  group_by(value) %>% 
+  tally() %>%
+  arrange(-n) %>%
+  filter(n >= 17) %>% # This is where the topics have some kind of unity - below that is a mishmash
+  rowid_to_column("cat_num") %>% 
+  rename(cat_size = n)
+
+epi_categories <- epi_categories %>% 
+  left_join(epi_category_sum, by = "value") %>% 
+  select(-value) %>% 
+  select(myid, cat_num, longcite, year, journal, cite_count, cat_size, everything()) %>% 
+  filter(is.na(cat_num) == FALSE)
+```
+
+```{r merge-epistemology-back}
+epi_categories <- epi_categories %>% 
+  mutate(cat_num = cat_num + 200)
+
+the_categories <- the_categories %>% 
+  bind_rows(epi_categories)
+```
+
+```{r create-bidirectional-cocitation}
+reverse_cocitation <- full_cocitation %>% 
+  select(article, X2 = X1, X1 = X2)
+
+double_cocitation <- bind_rows(full_cocitation, reverse_cocitation) %>% ungroup()
+```
+
+```{r round-two}
+original_categories <- the_categories %>% 
+  select(myid, cat_num)
+
+r2_cocites <- double_cocitation %>% 
+  filter(!X1 %in% the_categories$myid, X2 %in% the_categories$myid) %>% 
+  left_join(original_categories, by = c("X2" = "myid")) %>% 
+  group_by(X1) %>% 
+  add_tally() %>% 
+  filter(n >= 3) %>% 
+  group_by(X1, cat_num) %>% 
+  tally(name = "cocites") %>% 
+  filter(cocites >= 2) %>% 
+  group_by(X1) %>% 
+  add_count(wt = cocites) %>% 
+  mutate(s = cocites/n) %>% 
+  select(myid = X1, cat_num, s)
+
+r1_cocites <- original_categories %>% 
+  mutate(s= 1)
+
+round_two <- bind_rows(r1_cocites, r2_cocites) %>% 
+  arrange(myid) %>% 
+  left_join(extended_philo_bib, by = "myid")
+
+# To get cite count for articles so far crossprod(round_two$s, round_two$cite_count)[1,1]
+# To get articles so far n_distinct(round_two$myid)
+```
+
+```{r round-three}
+round_two_short <- round_two %>% 
+  select(myid, cat_num, s)
+
+two_way_cite <- modern_philo_cite %>% 
+  rename(refs = id, id = refs) %>% 
+  bind_rows(modern_philo_cite) %>% 
+  rename(X1 = id, X2 = refs) %>% 
+  left_join(id_list, by = c("X1" = "id")) %>% 
+  select(X1 = myid, X2) %>% 
+  left_join(id_list, by = c("X2" = "id")) %>% 
+  select(X1, X2 = myid) %>% 
+  filter(!X1 %in% round_two$myid, X2 %in% round_two$myid) %>% 
+  arrange(X1) %>% 
+  right_join(round_two_short, by = c("X2" = "myid")) %>% 
+  group_by(X1) %>% 
+  add_count(wt = s) %>% 
+  mutate(v = s/n) %>% 
+  group_by(X1, cat_num) %>% 
+  summarise(s = sum(v)) %>% 
+  left_join(extended_philo_bib, by = c("X1" = "myid")) %>% 
+  rename(myid = X1)
+
+round_three <- bind_rows(round_two, two_way_cite) %>% 
+  filter(year >= 2000) %>% 
+  filter(year < 2020) %>% 
+  arrange(-cite_count * s) %>% 
+  mutate(longcite = str_replace(longcite, "-", "&#8209;")) %>% 
+  mutate(longcite = str_replace(longcite, ": ", ":&nbsp;")) %>% 
+  mutate(longcite = str_replace(longcite, " \\(", "&nbsp;\\("))
+  
+
+early_papers <- bind_rows(round_two, two_way_cite) %>% 
+  filter(year < 2000) %>% 
+  arrange(-cite_count * s)
+
+```
+
+```{r data-summary}
+# Burper
+category_years <- round_three %>% 
+  group_by(cat_num) %>% 
+  summarise(n = sum(s), y = weighted.mean(year, s), c = crossprod(cite_count, s)) %>% 
+  arrange(-c) %>% 
+  mutate(y_rank = row_number(-y)) %>% 
+  mutate(mean_cite = c / n) %>% 
+  mutate(mean_cite_rank = row_number(-mean_cite)) %>% 
+  mutate(cat_class = case_when(c > 2250 ~ 1,
+                               c > 500 ~ 2,
+                               TRUE ~ 3)) %>% 
+  group_by(cat_class) %>% 
+  mutate(class_y_rank = row_number(-y))
+
+cat_names_types <- read_csv("cat_names_types.csv")
+
+category_years <- left_join(category_years,cat_names_types, by = "cat_num") %>% 
+  mutate(cat_shortcode = str_replace_all(cat_real_name, " ","-")) %>% 
+  mutate(cat_shortcode = str_replace(cat_shortcode, "'",""))
+
+
+precursors <- early_papers %>% 
+  group_by(cat_num) %>% 
+  slice(1:3) %>% 
+  mutate(longcite = str_replace(longcite, "-", "&#8209;")) %>% 
+  mutate(longcite = str_replace(longcite, ": ", ":&nbsp;")) %>% 
+  mutate(longcite = str_replace(longcite, " \\(", "&nbsp;\\("))
+
+
+year_totals <- round_three %>% 
+  group_by(year) %>% 
+  tally(wt = s, name = "total")
+
+
+
+```
+
+```{r journal-table}
+journals_summary <-  extended_philo_bib %>% 
+  filter(year >= 2000) %>% 
+  group_by(journal) %>% 
+  summarise(papers = n(), citations = sum(cite_count), starts = min(year)) %>% 
+  arrange(-citations/papers) 
+```
+
+```{r categories-by-type}
+# Burp
+pie_chart_data <- round_three %>% 
+  left_join(journal_type, by = "journal") %>% 
+  group_by(cat_num, type) %>% 
+  tally(wt = s, name = "cat_type") %>% 
+  ungroup() %>% 
+  complete(cat_num,type,fill=list(cat_type=0))
+```
+
+So if I get some time over the summer, I plan to write up my second manuscript on using data analysis to tell the story of the history of philosophy journals. The focus this time will be on using citation data to tell the story of very recent journals, in particular, journals published between 2000 and 2019.
+
+
+But I'm going to include data from just a slightly wider range than this. I'm going to include citations of journals published from 1992 onwards in journals published from 2000 onwards. It turns out using these journals helps - knowing who has been citing [Elusive Knowledge](https://philpapers.org/rec/LEWEK) or [What is the Point of Equality?](https://philpapers.org/rec/ANDWIT) helps the computer understand the divisions in 21st century philosophy.
+
+So our initial data set consists of citations meeting the following four criteria.
+
+1. The cited article is from 1992 or later.
+2. The citing article is from 2000 or later.
+3. Both the citing article and the cited article are in journals indexed in [ISI Web of Science](https://http://login.webofknowledge.com/).
+4. Both the citing article and the cited article are in philosophy journals.
+
+Constraint 3 rules out a lot, since it excludes books, book chapters, magazine articles, and anything not indexed. We still have a lot of data, but there is a lot we don't have, and we have to bear that in mind.
+
+Constraint 4 also rules out a lot, and requires us to answer hard questions about boundaries. I did this the following way. I first restricted attention to journals that Web of Science classified as either Philosophy or History and Philosophy of Science. (This included journals that had other classifications beside those; some journals get multiple classifications.) Then I removed the journals that I thought were clearly history of science rather than philosophy of science. If I was unsure, I tended to leave a journal in. But it also turned out not to really matter; the borderline cases tended to neither cite nor be cited by the remaining journals.
+
+That left us with the following amount of data.
+
+- There are `r nrow(journals_summary)` journals that we consider.
+- In those journals, there are `r nrow(extended_philo_bib)` articles from 1992 onwards which are indexed and available to be cited.
+- Of those articles, we look at the citations to them in the `r nrow(modern_philo_bib)` articles from 2000 onwards.
+- That gives us a total of `r nrow(citations_myid)` citations.
+
+Now that might not seem like a lot; it's surprising that there are only `r round(nrow(citations_myid)/nrow(extended_philo_bib), 2)` citations per article. But remember that a lot of these articles are discussion notes that may only cite a few articles, and even full length philosophy articles often only cite 10-15 things. And those citations are often to things that fall outside one or other of the four conditions described above. So it's not too surprising given all those considerations that we have so little data to work with.
+
+Still, one particular problem is that Web of Science often takes its time to get a journal into the system. So here are the journals where the `r nrow(modern_philo_bib)` articles I'm focussing on come from, including the first year that the journal was indexed.
+
+```{r journal-summary-table}
+
+# Leaving this in as an example of how to do links in DT
+# Rule 1 - escape out the quote marks in links
+# Rule 2 - include escape = FALSE as a line
+# Rule 3 - this is HTML specific - won't actually work in Word/EPUB/Latex
+#journals_summary_edited <- journals_summary
+#journals_summary_edited$journal[1] = "<a href=\"e3.html\">Philosophical Review</a>"
+
+datatable(journals_summary,
+#          escape = FALSE,
+          colnames = c("Journal", "Papers", "Citations", "First Year"), 
+          rownames = FALSE,
+          options = list(columnDefs = list(list(className = 'dt-left', targets = 0:3)),
+                         pageLength = 30
+                         ),
+          caption = htmltools::tags$caption("Journals included in this study", style = "font-weight: bold")
+    )%>%
+      formatStyle(1:4,`text-align` = 'left')  
+```
+
+That table is sortable, and if you sort by first year, you can see how many journals entered the system recently. Both Imprint and Compass only got added about 10 years after they started publishing, and that messes up things in some ways. But we do what we can with the existing data.
+
+I've ordered that table by mean number of citations. That's not actually a metric I'm going to use much in the study because it doesn't account for which journals publish discussion notes, criticial notices, book symposia, and other things that are likely to get few citations. But it's helpful to let you see which familiar journals are contributing to the data set.
+
+Note that I haven't yet sorted out the mess of Nous/Philosophical Perspectives/Philosophical Issues. This can be done, but it's a pain, and it's on the todo list for the summer. For now I'm just using the way Web of Knowledge classifies them, but I'll do better eventually.
+
+So once I had those, I created a co-citation graph. Each edge of the graph linked a pair of papers that were co-cited (i.e., both cited in the same article) at least 3 times. There were `r nrow(graph_input_short)` such pairs. That's not a lot; it's fewer than the number of papers we start with. Those pairs only involve `r n_distinct(c(graph_input_short$X1, graph_input_short$X2))` papers. But those papers are really important to the overall story. Of the `r nrow(citations_myid)` citations that this project is based around, `r nrow(citations_myid %>% filter(citation %in% graph_input_short$X1 | citation %in% graph_input_short$X2))` are to those `r n_distinct(c(graph_input_short$X1, graph_input_short$X2))` papers.
+
+- Then run a clustering algorithm
+- Filter at 17 because below that it became too hard to get themes; these all had themes (this is done so far)
+- I thought about rejoining some categories (especially the consciousness ones, the structure ones, the race/social ontology ones), but decided against it. Too hard to do anything principled; and kind of nice in some cases that they were separated. 38/84 feel a bit separate; 63/76 really seemed separate.
+
+```{r test-out-kable}
+topics_big_table <- category_years %>% 
+  arrange(cat_field,cat_real_name) %>% 
+  rowid_to_column(var="alpha_number") %>% 
+  select(alpha_number,cat_real_name,cat_field,n,cat_class,y,cat_num,cat_shortcode)
+
+topics_with_links <- topics_big_table %>% 
+  mutate(cat_real_name = paste0("[",cat_real_name,"](#t-",cat_shortcode,")"),
+         n = round(n,1),
+         y = round(y, 1))
+
+kable(topics_with_links %>% select(2:6),
+      col.names = c("Topic", "Field", "Articles", "Group", "Mean Year"))
+
+```
+
+#### A Test {.tabset}
+
+##### Plot
+
+```{r}
+ggplot(topics_big_table, aes(x = y, y = n)) + geom_point()
+```
+
+##### Table
+
+```{r}
+datatable(topics_big_table %>% ungroup() %>%   select(cat_real_name,y,n))
+```
+
+#### {-}
+
+Did this test work?
+
+## Technical Details {-}
+
+This draft produced on `r Sys.Date()` withthe following configuration:
+
+<details>
+    <summary>Show configuration</summary>
+```{r session-info}
+xfun::session_info()
+```
+</details>
+
+
+```{r empty-block-end-of-index}
+# I love placeholders
+```
