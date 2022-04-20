@@ -1,2 +1,63 @@
 ## Perceptual Content {#topten-perceptual-content}
 
+:::{#perception-graph style="float:right; width:60%"}
+
+```{r perception-graph, fig.height=4, fig.width=4.5, fig.cap=cap_text}
+jjj <- 127
+the_cat <- topics_big_table$cat_num[jjj]
+target_articles <- round_three %>% filter(cat_num == the_cat)
+active_precursors <- precursors %>% filter(cat_num == the_cat)
+category_properties <- category_years %>% filter(cat_num == the_cat)
+source('appendix-graphs.R') 
+p1
+cap_text <- paste0("Frequency of articles in ", category_properties$cat_real_name[1], " across all journals from 2000-2019")
+
+journal_distribution <- target_articles %>%
+  group_by(journal) %>%
+  tally(wt = s) %>%
+  arrange(-n) %>%
+  mutate(n = round(n, 2)) %>%
+  slice(1:10)
+```
+:::
+
+<br><br>
+
+**Articles**: `r round(category_properties$n[1],1)`
+
+**Citations**: `r round(category_properties$c[1],1)`
+
+**Mean Year**: `r toString(round(category_properties$y[1],2))` <br>
+**Relative Age**: `r category_properties$y_rank[1]` <br>
+**Age in Group 1**:  `r category_properties$class_y_rank[1]` 
+
+**Primary Journals**
+
+1. `r journal_distribution$journal[1]`
+2. `r journal_distribution$journal[2]`
+3. `r journal_distribution$journal[3]`
+
+:::{#perception-papers style="clear:both"}
+
+```{r perception-papers}
+cat("**Most Cited Articles**\n\n")
+
+target_articles <- round_three %>% filter(cat_num == the_cat)
+cat("::: apa-reference \n\n")  
+for (jj in 1:5){
+  cat(target_articles$longcite[jj], " \n\n", sep="")
+}
+cat(":::\n\n")
+
+cat("<br>**[Full Data](#t-Perceptual-Content)**\n\n")
+
+```
+
+:::
+
+<br>
+
+**Comments**
+
+Hello world
+

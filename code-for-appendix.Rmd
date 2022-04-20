@@ -1,0 +1,15 @@
+---
+title: "Untitled"
+author: "Brian Weatherson"
+date: "4/27/2021"
+output: html_document
+---
+
+```{r echo=FALSE}
+for (j in 1:3){
+cat("```{r t",j,"a}\n",sep="")
+cat("source('topic_comments/topic_summary_data.R') # Get data\n")
+cat("opts_knit$set(eval.after = \"fig.cap\")\n")
+cat("```\n\n")
+}
+```

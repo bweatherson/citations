@@ -1,0 +1,86 @@
+# Kant
+
+```{r e01-setup}
+current_topic <- "Kant"
+current_topic_table <- topics_big_table %>% 
+  filter(cat_field == current_topic)
+
+for (ijk in 1:nrow(current_topic_table)){
+  cat("- [",current_topic_table$cat_real_name[ijk],"](#t-",current_topic_table$cat_shortcode[ijk],")\n", sep="")
+}
+```
+
+```{r t70a}
+jjj <- 70 
+source('appendix-data.R') 
+temp_dt
+```
+
+```{r t70b, fig.height = 4, fig.cap = cap_text, fig.alt = alt_text}
+source('appendix-graphs.R') 
+p1+p2
+```
+
+```{r t70c}
+source('appendix-tables.R') 
+```
+
+```{r t71a}
+jjj <- 71 
+source('appendix-data.R') 
+temp_dt
+```
+
+```{r t71b, fig.height = 4, fig.cap = cap_text, fig.alt = alt_text}
+source('appendix-graphs.R') 
+p1+p2
+```
+
+```{r t71c}
+source('appendix-tables.R') 
+```
+
+```{r t72a}
+jjj <- 72 
+source('appendix-data.R') 
+temp_dt
+```
+
+```{r t72b, fig.height = 4, fig.cap = cap_text, fig.alt = alt_text}
+source('appendix-graphs.R') 
+p1+p2
+```
+
+```{r t72c}
+source('appendix-tables.R') 
+```
+
+```{r t73a}
+jjj <- 73 
+source('appendix-data.R') 
+temp_dt
+```
+
+```{r t73b, fig.height = 4, fig.cap = cap_text, fig.alt = alt_text}
+source('appendix-graphs.R') 
+p1+p2
+```
+
+```{r t73c}
+source('appendix-tables.R') 
+```
+
+```{r t74a}
+jjj <- 74 
+source('appendix-data.R') 
+temp_dt
+```
+
+```{r t74b, fig.height = 4, fig.cap = cap_text, fig.alt = alt_text}
+source('appendix-graphs.R') 
+p1+p2
+```
+
+```{r t74c}
+source('appendix-tables.R') 
+```

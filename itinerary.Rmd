@@ -1,24 +1,25 @@
 # A Sample Reading List
 
-Year    Topic     Paper
------   ------    ----------
-2000        3     Thinking about Mechanisms
-2001       17     Knowing How
-2002      201     Evidence, Pragmatics and Justification (three co-authored papers in a row)
-2003        7     Future Contingents and Relative Truth
-2004        8     The Limits of Self-Awareness
-2005       29     Responsibility for Attitudes
-2006       15     A Darwinian Dilemma
-2007      204     Epistemology of Disagreement/Reflection and Disagreement (pick one)
-2008       24     Alief and Belief
-2009       25     Moral Testimony and Moral Epistemology
-2010        5     Acting For The Right Reasons
-2011        6     By Our Bootstraps
-2012      203     Anti-Luck Virtue Epistemology
-2013       26     Two Flavors of Curry's Paradox
-2014       38     Conceptualizing Epistemic Oppression
-2015      126     What You Can't Expect When You're Expecting
-2016      122     The Self-Evidencing Brain
-2017       39     On Fraud
-2018      114     David Lewis in the lab: experimental results on the emergence of meaning
-2019       45     Against "Transracialism": Revisiting The Debate 
+Year    Topic     G R  Paper
+-----   ------    - - ----------
+2000        3     B W Thinking about Mechanisms
+2001       19     M W Conceptual Analysis And Reductive Explanation
+2002      201     M W Evidence, Pragmatics and Justification 
+2003        7     M W Future Contingents and Relative Truth
+2004       63     F N Situationism and Virtue Ethics on the Content of Our Character
+2005       29     F W Responsibility for Attitudes
+2006       15     F W A Darwinian Dilemma
+2007      204     M W Epistemology of Disagreement
+2008       24     F W Alief and Belief
+2009       25     F W Moral Testimony and Moral Epistemology
+2010       30     M W Causation in biology: Stability, specificity, and the choice of levels of explanation
+2011        8     F W Perceptual Content Defended
+2012      202     F W Cognitive Penetration Of Colour Experience
+2013       26     M W Paradoxes And Failures Of Cut
+2014       38     F N Conceptualizing Epistemic Oppression
+2015      126     F W What You Can't Expect When You're Expecting
+2016        6     M W Fittingness First
+2017       39     M N On Fraud
+2018        5     M W The Unity of Grounding
+2019       NA     F W Perpetuating the patriarchy: misogyny and post-(feminist) backlash
+

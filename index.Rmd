@@ -7,6 +7,7 @@ documentclass: book
 link-citations: yes
 site: bookdown::bookdown_site
 description: Building models of the trends in philosophy journals using LDA.
+bibliography: citations.bib
 always_allow_html: true
 ---
 
@@ -21,15 +22,21 @@ knitr::opts_chunk$set(warning=FALSE)
 knitr::opts_chunk$set(fig.height = 8.2)
 knitr::opts_chunk$set(fig.width = 7.5)
 knitr::opts_chunk$set(results='asis')
+knitr::opts_chunk$set(eval.after = c('fig.cap', 'fig.alt'))
 
 knitr::knit_hooks$set(inline = function(x) {
-  prettyNum(x, big.mark=",")
-})
+      if(is.numeric(x)){
+          return(prettyNum(x, big.mark=","))
+      }else{
+          return(x)
+       }
+   })
 
 require(tidyverse)
 require(igraph)
 require(DT)
 require(kableExtra)
+require(scales)
 
 options(dplyr.summarise.inform = FALSE)
 ```
@@ -52,6 +59,65 @@ require(readr)
 journal_type <- read_csv("journal_type.csv")
 
 set.seed(14071789)
+```
+
+```{r rename-journals}
+# Replace the useless subtitles of journals
+# There are more efficient ways to do this than by hand
+# But for only 14 journals it wasn't worth learning the stringr notation
+philo_bib <- philo_bib %>% 
+  mutate(journal = replace(journal, 
+    journal == "Acta Analytica-International Periodical For Philosophy In The Analytical Tradition", 
+    "Acta Analytica"
+  )) %>% 
+  mutate(journal = replace(journal, 
+    journal == "Dialogue-Canadian Philosophical Review", "Dialogue"
+  )) %>% 
+  mutate(journal = replace(journal, 
+    journal == "Episteme-A Journal Of Individual And Social Epistemology", "Episteme"
+  )) %>% 
+  mutate(journal = replace(journal, 
+    journal == "Ergo-An Open Access Journal Of Philosophy", "Ergo"
+  )) %>% 
+  mutate(journal = replace(journal, 
+    journal == "Heythrop Journal-A Quarterly Review Of Philosophy And Theology", "Heythrop Journal"
+  )) %>% 
+  mutate(journal = replace(journal, 
+    journal == "Hypatia-A Journal Of Feminist Philosophy", "Hypatia"
+  )) %>% 
+  mutate(journal = replace(journal, 
+    journal == "Inquiry-An Interdisciplinary Journal Of Philosophy", "Inquiry"
+  )) %>% 
+  mutate(journal = replace(journal, 
+    journal == "Phronesis-A Journal For Ancient Philosophy", "Phronesis"
+  )) %>% 
+  mutate(journal = replace(journal, 
+    journal == "Russell-The Journal Of The Bertrand Russell Archives", "Russell"
+  )) %>% 
+  mutate(journal = replace(journal, 
+    journal == "Russell-The Journal Of The Bertrand Russell Studies", "Russell"
+  )) %>% 
+  mutate(journal = replace(journal, 
+    journal == "Theoria-A Swedish Journal Of Philosophy", "Theoria"
+  )) %>% 
+  mutate(journal = replace(journal, 
+    journal == "Thought-A Journal Of Philosophy", "Thought"
+  )) %>% 
+  mutate(journal = replace(journal, 
+    journal == "Topoi-An International Review Of Philosophy", "Topoi"
+  )) %>% 
+  mutate(journal = replace(journal, 
+    journal == "Vivarium-An International Journal For The Philosophy And Intellectual Life Of The Middle Ages And Renaissance", "Vivarium"
+  )) 
+
+# Some notes about journals
+# We start with 103
+# Minnesota Studies doesn't have anything after 2000, so it drops out
+# The mutations above merge the "Russell" entries
+# There are only 30 articles in Archives De Philosophie, and none make round 3, so they drop out
+# That leaves a round 100 in the main entry
+# But some of them are small - Diogenes only 2 articles!
+# There are 70 journals that have at least 100 articles; they are the focus
 ```
 
 ```{r initial-setup}
@@ -295,11 +361,10 @@ round_three <- bind_rows(round_two, two_way_cite) %>%
 early_papers <- bind_rows(round_two, two_way_cite) %>% 
   filter(year < 2000) %>% 
   arrange(-cite_count * s)
-
 ```
 
 ```{r data-summary}
-# Burper
+# Initial summary table
 category_years <- round_three %>% 
   group_by(cat_num) %>% 
   summarise(n = sum(s), y = weighted.mean(year, s), c = crossprod(cite_count, s)) %>% 
@@ -313,12 +378,28 @@ category_years <- round_three %>%
   group_by(cat_class) %>% 
   mutate(class_y_rank = row_number(-y))
 
+# Pull in the names I gave to each category, and their classification
 cat_names_types <- read_csv("cat_names_types.csv")
 
+# Generate shortcodes for tagging automatically generated chunks
 category_years <- left_join(category_years,cat_names_types, by = "cat_num") %>% 
   mutate(cat_shortcode = str_replace_all(cat_real_name, " ","-")) %>% 
   mutate(cat_shortcode = str_replace(cat_shortcode, "'",""))
 
+# The table that becomes the big entries
+category_dt <- round_three %>% 
+  filter(s > 0.1) %>% 
+  mutate(s = round(s, 1)) %>% 
+  left_join(category_years, by = "cat_num") %>% 
+  select(Topic = cat_real_name,
+         Author = author,
+         Title = title,
+         Journal = journal,
+         Year = year,
+         Bib = bib,
+         Citations = cite_count,
+         s
+         )
 
 precursors <- early_papers %>% 
   group_by(cat_num) %>% 
@@ -332,26 +413,149 @@ year_totals <- round_three %>%
   group_by(year) %>% 
   tally(wt = s, name = "total")
 
+topics_big_table <- category_years %>% 
+  arrange(cat_field,cat_real_name) %>% 
+  rowid_to_column(var="alpha_number") %>% 
+  select(alpha_number,cat_real_name,cat_field,n,cat_class,y,cat_num,cat_shortcode)
 
+# A two column vector for replacing the automatically generated numbers with 
+cat_num_to_alpha_num <- topics_big_table %>% 
+  ungroup() %>% 
+  select(cat_num, alpha_number)
+
+articles_with_topics <- round_three %>% 
+  left_join(cat_num_to_alpha_num, by = "cat_num") %>% 
+  left_join(cat_names_types, by = "cat_num") %>% 
+  select(-id, -cat_num, -myid)
 
 ```
 
 ```{r journal-table}
 journals_summary <-  extended_philo_bib %>% 
-  filter(year >= 2000) %>% 
+  filter(year >= 2000, year < 2020) %>% 
   group_by(journal) %>% 
-  summarise(papers = n(), citations = sum(cite_count), starts = min(year)) %>% 
+  summarise(papers = n(), citations = sum(cite_count), starts = min(year), ends = max(year)) %>% 
   arrange(-citations/papers) 
 ```
 
 ```{r categories-by-type}
-# Burp
 pie_chart_data <- round_three %>% 
   left_join(journal_type, by = "journal") %>% 
   group_by(cat_num, type) %>% 
   tally(wt = s, name = "cat_type") %>% 
   ungroup() %>% 
   complete(cat_num,type,fill=list(cat_type=0))
+```
+
+```{r categories-co-citation}
+round_three_short <- round_three %>% 
+  select(myid, cat_num, s)
+
+cat_co_cite <- inner_join(double_cocitation, round_three_short, by = c("X1" = "myid")) %>% 
+  rename(cat1 = cat_num, s1 = s) %>% 
+  inner_join(round_three_short, by = c("X2" = "myid")) %>% 
+  rename(cat2 = cat_num, s2 = s) %>% 
+  mutate(s = s1 * s2) %>% 
+  left_join(select(category_years, cat_num, cat_class, cat_real_name), by = c("cat2" = "cat_num"))
+
+max_cat_co_cite <- cat_co_cite %>% 
+  filter(cat1 != cat2) %>% 
+  group_by(cat1, cat2, cat_class) %>% 
+  summarise(cross = sum(s)) %>% 
+  group_by(cat1, cat_class) %>% 
+  arrange(-cross) %>% 
+  slice(1) %>% 
+  ungroup() %>% 
+  left_join(select(category_years, cat_num, cat_class, cat_real_name), by = c("cat_class", "cat2" = "cat_num"))
+```
+
+```{r categories-cite-each-other}
+# I changed finding topics by number to by name here
+# Probably should go back and adjust other things too
+# The ID numbers stopped being useful after a bit
+topics_big_table <- category_years %>% 
+  arrange(cat_field,cat_real_name) %>% 
+  rowid_to_column(var="alpha_number") %>% 
+  select(alpha_number,cat_real_name,cat_field,n,cat_class,y,cat_num,cat_shortcode)
+
+interactions <- modern_philo_cite %>% 
+  right_join(round_three, by = "id") %>% 
+  select(id, refs, cite_from_article = longcite, cite_from_s = s, cite_from_cat_num = cat_num) %>% 
+  right_join(round_three, by = c("refs" = "id")) %>% 
+  select(id, refs, cite_from_article, cite_from_s, cite_from_cat_num, cite_to_article = longcite, cite_to_s = s, cite_to_cat_num = cat_num) %>% 
+  mutate(s = cite_from_s * cite_to_s) %>% 
+  left_join(topics_big_table %>% select(cat_num, cat_class, cat_real_name, n), by = c("cite_from_cat_num" = "cat_num")) %>% 
+  rename(cite_from_cat_class = cat_class, cite_from_cat_real_name = cat_real_name, cat_from_n = n) %>% 
+  left_join(topics_big_table %>% select(cat_num, cat_class, cat_real_name, n), by = c("cite_to_cat_num" = "cat_num")) %>% 
+  rename(cite_to_cat_class = cat_class, cite_to_cat_real_name = cat_real_name, cat_to_n = n)
+  
+citations_from_class <- interactions %>% 
+  group_by(cite_from_cat_real_name, cite_from_cat_class, cite_to_cat_real_name, cite_to_cat_class, cat_from_n, cat_to_n) %>% 
+  tally(wt = s) %>% 
+  filter(cite_from_cat_real_name != cite_to_cat_real_name) %>% 
+  ungroup() %>% 
+  complete(nesting(
+            cite_from_cat_real_name, cite_from_cat_class, cat_from_n
+            ),
+           nesting(
+            cite_to_cat_real_name, cite_to_cat_class, cat_to_n
+           ),
+           fill=list(n = 0)
+            ) %>% 
+  filter(cite_from_cat_real_name != cite_to_cat_real_name) %>% 
+  mutate(nn = cat_from_n * cat_to_n,
+         r = n/(nn^0.5)
+        )
+
+#This is two way connection for writing in chapter on connections
+#It isn't to be used for the data tables in Appendix A
+#Though if there are graphs in the connections chapter, it should go in Appendix B with other data tables
+topic_connection <- citations_from_class %>%
+  left_join(select(citations_from_class, cite_to_cat_real_name, cite_from_cat_real_name, r),
+                   by = c("cite_from_cat_real_name" = "cite_to_cat_real_name", 
+                                         "cite_to_cat_real_name" = "cite_from_cat_real_name")) %>% 
+  mutate(score = r.x + r.y) %>% 
+  arrange(-score) %>% 
+  select(cite_from_cat_real_name, cite_to_cat_real_name, score, everything())
+
+max_cite_from <- citations_from_class %>% 
+  group_by(cite_from_cat_real_name, cite_to_cat_class) %>% 
+  rename(citations = n) %>% 
+  slice_max(citations, n = 1)
+
+max_cite_to <- citations_from_class %>% 
+  group_by(cite_to_cat_real_name, cite_from_cat_class) %>% 
+  rename(citations = n) %>% 
+  slice_max(citations, n = 1)
+```
+
+```{r journals-and-types}
+journal_size <- modern_philo_bib %>% 
+  group_by(journal) %>% 
+  summarise(j = n_distinct(id))
+
+journals_in_topics <- articles_with_topics %>% 
+  group_by(journal) %>% 
+  summarise(j = sum(s)) %>% 
+  filter(j >= 100)
+
+topic_size <- articles_with_topics %>% 
+  group_by(cat_real_name) %>% 
+  summarise(c = sum(s))
+
+journal_category <- articles_with_topics %>% 
+  group_by(journal, cat_real_name) %>% 
+  summarise(t = sum(s)) %>% 
+  filter(journal %in% journals_in_topics$journal) %>% # Only include journals with 100 classified articles
+  ungroup() %>% 
+  complete(journal,cat_real_name,fill=list(t=0)) %>% 
+  left_join(journal_size, by = "journal") %>% 
+  left_join(topic_size, by = "cat_real_name") %>% 
+  mutate(r = t / j) %>% 
+  group_by(cat_real_name) %>% 
+  mutate(z = scale(r)) %>% 
+  left_join(journal_type, by = "journal")
+
 ```
 
 So if I get some time over the summer, I plan to write up my second manuscript on using data analysis to tell the story of the history of philosophy journals. The focus this time will be on using citation data to tell the story of very recent journals, in particular, journals published between 2000 and 2019.
@@ -392,7 +596,7 @@ Still, one particular problem is that Web of Science often takes its time to get
 
 datatable(journals_summary,
 #          escape = FALSE,
-          colnames = c("Journal", "Papers", "Citations", "First Year"), 
+          colnames = c("Papers", "Citations", "First Year", "Last Year"), 
           rownames = FALSE,
           options = list(columnDefs = list(list(className = 'dt-left', targets = 0:3)),
                          pageLength = 30
@@ -418,7 +622,7 @@ So once I had those, I created a co-citation graph. Each edge of the graph linke
 topics_big_table <- category_years %>% 
   arrange(cat_field,cat_real_name) %>% 
   rowid_to_column(var="alpha_number") %>% 
-  select(alpha_number,cat_real_name,cat_field,n,cat_class,y,cat_num,cat_shortcode)
+  select(alpha_number,cat_real_name,cat_field,n,cat_class,y,cat_num,cat_shortcode, c, y_rank, class_y_rank)
 
 topics_with_links <- topics_big_table %>% 
   mutate(cat_real_name = paste0("[",cat_real_name,"](#t-",cat_shortcode,")"),
@@ -430,23 +634,7 @@ kable(topics_with_links %>% select(2:6),
 
 ```
 
-#### A Test {.tabset}
 
-##### Plot
-
-```{r}
-ggplot(topics_big_table, aes(x = y, y = n)) + geom_point()
-```
-
-##### Table
-
-```{r}
-datatable(topics_big_table %>% ungroup() %>%   select(cat_real_name,y,n))
-```
-
-#### {-}
-
-Did this test work?
 
 ## Technical Details {-}
 

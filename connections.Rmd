@@ -2,6 +2,34 @@
 
 ## Connections Between Topics
 
+```{r notes-on-connections}
+topic_connection_no_dupes <- topic_connection %>% 
+  filter(r.x < r.y)
+
+# Topics to talk about
+
+# Contextualism - Knowledge Norms
+# Models - Mechanisms - Exclusion Problem
+# Perceptual Content - Justification
+# As example of no surprise - Welfare and Goals/Welfare and Desires; or Self-Defence; Just-War
+# Extended Mind - Predictive Proceessing - it's just Andy Clark
+# Promises - Silencing
+# Indexicals - Silencing
+# Normative Testimony - Moral Motivation
+# Justification - Emotion
+# Quantum Field Theory - Indiscernibility
+
+# max_cite_to %>% filter(cite_from_cat_class == 1) %>% group_by(cite_from_cat_real_name) %>% tally()
+# Reasons 53, Grounding 29, Mechanisms 26, Relativism 17
+# First doesn't surprise me; next two sort of do, especially gap to fourth
+
+# max_cite_from %>% filter(cite_to_cat_class == 1) %>% group_by(cite_to_cat_real_name) %>% tally()
+# Reasons 51, Grounding 28, Mechanisms 23, Relativism 15
+
+# max_cat_co_cite %>% filter(cat_class == 1) %>% group_by(cat_real_name) %>% tally()
+# Reasons 42, Grounding 30, Mechanisms 25, Relativism 23 (bit higher now)
+```
+
 ## Connections Between Journals
 
 ## Connections Between Fields

@@ -1,2 +1,100 @@
 ## Parthood {#topten-parthood}
 
+:::{#parthood-graph style="float:right; width:60%"}
+
+```{r parthood-graph, fig.height=4, fig.width=4.5, fig.cap=cap_text}
+jjj <- 115
+the_cat <- topics_big_table$cat_num[jjj]
+target_articles <- round_three %>% filter(cat_num == the_cat)
+active_precursors <- precursors %>% filter(cat_num == the_cat)
+category_properties <- category_years %>% filter(cat_num == the_cat)
+source('appendix-graphs.R') 
+p1
+cap_text <- paste0("Frequency of articles in ", category_properties$cat_real_name[1], " across all journals from 2000-2019")
+
+journal_distribution <- target_articles %>%
+  group_by(journal) %>%
+  tally(wt = s) %>%
+  arrange(-n) %>%
+  mutate(n = round(n, 2))
+
+journals_count <- modern_philo_bib %>% 
+  group_by(journal) %>% 
+  tally(name = "t")
+
+journals_ratio <- journal_distribution %>% 
+  left_join(journals_count, by = "journal") %>% 
+  mutate(r = round(n/t, 3)) %>% 
+  arrange(-r) %>% 
+  slice(1:10)
+```
+:::
+
+<br>
+
+**Articles**: `r round(category_properties$n[1],1)`
+
+**Citations**: `r round(category_properties$c[1],1)`
+
+**Mean Year**: `r toString(round(category_properties$y[1],2))` <br>
+**Relative Age**: `r category_properties$y_rank[1]` <br>
+**Age in Group 1**:  `r category_properties$class_y_rank[1]` 
+
+**Top Journals by Count**
+
+1. `r journal_distribution$journal[1]`
+2. `r journal_distribution$journal[2]`
+3. `r journal_distribution$journal[3]`
+
+**Top Journals by Ratio**
+
+1. `r journals_ratio$journal[1]`
+2. `r journals_ratio$journal[2]`
+3. `r journals_ratio$journal[3]`
+
+:::{#parthood-papers style="clear:both"}
+
+```{r parthood-papers}
+cat("**Most Cited Articles**\n\n")
+
+target_articles <- round_three %>% filter(cat_num == the_cat)
+cat("::: apa-reference \n\n")  
+for (jj in 1:5){
+  cat(target_articles$longcite[jj], " \n\n", sep="")
+}
+cat(":::\n\n")
+
+cat("<br>**[Full Data](#t-Parthood)**\n\n")
+
+```
+
+:::
+
+**Comments**
+
+Mereology, the study of parts and wholes, is important to three overlapping debates in recent philosophy. All three of these were considerably more prominent in the 2000s than they became in the 2010s, and you can see that from the graph above. But their influence lived on through the 2010s - just usually in topics that our model separates out from this one.
+
+The first of these three debates concerns the nature of persistence. One view of persistence is that things persist by having a part at each of moment they exist - so-called 'temporal parts'. The alternative view is that things do not have temporal parts, and are 'wholly present' at each moment of their existence. Just what it means to be wholly present, beyond its negative characterisation in terms of not having temporal parts, was a matter of some debate.
+
+The terminology around here got a bit confusing. On one way of speaking, the temporal parts view was called _perdurantism_, and the rival wholly present view was called _endurantism_. But it seems odd to associate one view with the innocuous ordinary term 'endure', and they other with a made up verb 'perdure'. On another way of speaking, the temporal parts view was called _four-dimensionalism_ and the rival view _three-dimensionalism_. But this seems if anything back-to-front. It's the temporal parts view that thinks the fundamental entities are three-dimensional, and the rival that thinks they are four-dimensional - i.e., temporally extended. In any case, you might think 'three-dimensionalism' was a better name for the view that the universe itself is three-dimensional, and four-dimensionalism for the view that it is four-dimensional, in virtue of the existence of past and future times. Those views are typically called _presentism_ and _eternalism_; except in places where they are called 'three-dimensionalism' and 'four-dimensionalism'.
+
+David Lewis [-@Lewis1988] had argued for the temporal parts theory on account of it having a better account of change. More recent defenders of the temporal parts theory focussed more on its account of how counting across time worked, especially in cases of fission and fusion. The most prominent recent defenders, Ted Sider [-@Sider2001] and Katherine Hawley [-@Hawley2001], disagreed with Lewis on another point. Lewis thought that an ordinary name, like 'Barack Obama' typically referred to a fusion of temporal parts. So that name picks out a temporally extended thing - just one that manages to be temporally extended by having parts at different times. Sider and Hawley say that instead it picks out Obama's current temporal part, and when we talk about what Obama was doing in November 2008, this is like talking about what Obama would have done had he lost the election; we need to think about something like Obama's counterparts. (To add to the terminological mess, sometimes 'perdurantism' is used to mean the conjunction of temporal parts theory and Lewis's side of this debate, and some other term, like 'stage theory' is used for the Sider/Hawley view.)
+
+The second debate concerns something that I've already alluded to: mereological fusions. In ordinary talk, we often refer to things as being made of parts. My car, for instance, has innumerably many parts - most of them still functional. But we don't say that any old parts form a whole. We don't normally countenance objects like the fusion of my car minus its gearbox, with the gearbox of your car. (The fusion of some things, if it exists, is the object which has all of them as parts, and has nothing else, nothing that does not overlap any of them, as parts.) So this leads to an interesting question, one that Peter van Inwagen [-@vanInwagen1990] called the "Special Composition Question". When do some parts form a whole? Or, in more technical language, when do some objects have a fusion.
+
+Two extreme answers naturally suggest themselves. One is that universalism, the view that any objects whatsoever form a whole. There is something that consists of my car with your gearbox, and you don't have to get any tools out to build it. Another is nihilism, the view that objects never form a whole. On this view I don't actually have a car, but I do have some things that are arranged carishly. And then there are any number of views between these extremes.
+
+One natural thought behind the universalist view is that it doesn't really add anything to the furniture of the world to say that the car exists, once you have agreed that its parts exist. Just what this tempting thought comes to is not clear, but that hardly stops it being tempting. One idea is that the whole just is the parts; that the whole is somehow identical to its parts. But on reflection, this is no clearer than what we started with. As stated, it looks absurd; a single thing, the car, is said to be identical to a plurality, its parts. But maybe, as Sider [-@Sider2007] argues, there is something true in the vicinity. (Though note that in later work, Sider [-@Sider2013] takes a different view.)
+
+But if universalism is such a metaphysically weak addition to nihilism - it's not adding to the furniture that the nihilist recognises - this suggests that the universalist and the nihilist aren't really disagreeing. Perhaps they are, as Eli Hirsch [-@Hirsch2005] suggests, just having a verbal dispute. This question became central to the third big dispute - what are disputes about mereology really about.
+
+This dispute is, I think, interesting in its own right. But in the late 2000s, it also served as a placeholder for a broader scepticism about whether any metaphysical questions were about real issues. Perhaps all of metaphysics was a series of verbal disputes. And even among people who disagreed with this view, often quite strongly, the fear that their critics who insisted they were just having verbal disputes, seemed to animate a lot of work.
+
+These disputes became known as _metametaphysics_. On the idea that the prefix 'meta' now means about, they were disputes about metaphysics. Personally, I always thought that the mereological questions were poor choices of an example of a metametaphysical debate. I thought that because I thought (and for that matter still do think) that there were specific reasons for treating the nihilism/universalism dispute as a verbal dispute that did not extend to other disputes. I don't see how any considerations about the subject matter of mereology could convince me that it is a substantive and not just a verbal question whether such and such event was causally relevant to the start of World War One.
+
+There is more than a whiff of positivism about the view that metaphysical questions are verbal disputes. At the very least, the amount of energy spent on this dispute in the late 2000s was a sign that broadly anti-realist views were being taken more seriously in mainstream metaphysics than they had been any time since at least the 1960s.
+
+The high point of debates about metametaphysics was the publication of an important edited volume with that title in 2009. One of the papers in that volume, by Jonathan [-@Schaffer2009], became one of the founding documents of the hyper-realist movement that dominated the 2010s. But we'll talk about that movement more when we discuss [Grounding](#t-Grounding).
+
+If a philosopher says that the dispute between two metaphysicians is a verbal dispute, you might want to ask them just what they mean by saying something is a verbal dispute. Saying just what makes something a verbal dispute turns out to be a very hard project, and there were several interesting papers on that question, especially in the early 2010s [@Chalmers2011; @Jenkins2014]. But papers on just that question are not included here. For it turns out debates about disagreement, debates about debates we might say in keeping with the metameta theme of this topic, are going to turn up several times in these ten largest topics.
+

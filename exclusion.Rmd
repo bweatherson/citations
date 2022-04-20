@@ -1,2 +1,99 @@
 ## The Exclusion Problem {#topten-exclusion}
 
+:::{#exclusion-graph style="float:right; width:60%"}
+
+```{r exclusion-graph, fig.height=4, fig.width=4.5, fig.cap=cap_text}
+jjj <- 107
+the_cat <- topics_big_table$cat_num[jjj]
+target_articles <- round_three %>% filter(cat_num == the_cat)
+active_precursors <- precursors %>% filter(cat_num == the_cat)
+category_properties <- category_years %>% filter(cat_num == the_cat)
+source('appendix-graphs.R') 
+p1
+cap_text <- paste0("Frequency of articles in ", category_properties$cat_real_name[1], " across all journals from 2000-2019")
+
+journal_distribution <- target_articles %>%
+  group_by(journal) %>%
+  tally(wt = s) %>%
+  arrange(-n) %>%
+  mutate(n = round(n, 2)) %>%
+  slice(1:10)
+```
+:::
+
+<br><br>
+
+**Articles**: `r round(category_properties$n[1],1)`
+
+**Citations**: `r round(category_properties$c[1],1)`
+
+**Mean Year**: `r toString(round(category_properties$y[1],2))` <br>
+**Relative Age**: `r category_properties$y_rank[1]` <br>
+**Age in Group 1**:  `r category_properties$class_y_rank[1]` 
+
+**Primary Journals**
+
+1. `r journal_distribution$journal[1]`
+2. `r journal_distribution$journal[2]`
+3. `r journal_distribution$journal[3]`
+
+:::{#exclusion-papers style="clear:both"}
+
+```{r exclusion-papers}
+cat("**Most Cited Articles**\n\n")
+
+target_articles <- round_three %>% filter(cat_num == the_cat)
+cat("::: apa-reference \n\n")  
+for (jj in 1:5){
+  cat(target_articles$longcite[jj], " \n\n", sep="")
+}
+cat(":::\n\n")
+
+cat("<br>**[Full Data](#t-Exclusion-Problem)**\n\n")
+
+```
+
+:::
+
+<br>
+
+**Comments**
+
+
+It is often useful to describe something using terms that summarise its characteristics, rather than list all of them. So one way to describe a particular wire might be to list as many attributes of its microphysical constituents as possible, while would be to say that it's a copper wire. The former will be more detailed, but the latter will be more useful if all you want to know is whether it conducts electricity. Or, to use an example from a very different field, we could say what's happening to prices in an economy by listing all the goods for sale, and noting the change of their prices. Or instead we could just say that inflation was 3.2%, summarising all that data. Call the summary the _higher-level_ description, and the underlying list the _lower-level_ description. Note that these are explicitly comparative terms. Saying that the price of apples rose 6% is a very high-level description of society relative to a description in physical, chemical, biological, or even psychological terms. But it's lower-level than just stating the inflation rate. 
+
+These descriptions don't just enter into our everyday talk. They also enter into our scientific explanations of the world, and (if this is even a different point) into our causal picture of the world. Depending on one's interests, one might tell a causal story about some phenomena using either lower-level or higher-level descriptions. These descriptions look different, but this doesn't mean the phenomena really has two causes; that it must be in some deep sense over-determined. There isn't any tension between saying the government lost popularity because of the high inflation rate, and saying it lost popularity because of the rising prices of food and energy. Everyone knows that the truth of a higher-level causal claim is compatible with the truth of a lower-level causal claim, even for an event with a single cause. What this topic presupposes is, maybe it isn't.^[I'm not kidding about the 'everyone knows'. See @BlanchardEtAl2021 for empirical data on this.]
+
+The exclusion problem, as it came to be known in 1990s and 2000s philosophy, turned on the following set of assumptions.
+
+First, causation is a relation between events. Following Lewis [-@Lewis2004b], I suspect this is false, but it's a pretty widely held view.
+
+Second, higher-level descriptions pick out different events to lower-level descriptions. If you like you can replace this premise with an argument to the same conclusion. The events picked out by higher-level and lower-level descriptions seem to have different modal profiles - what changes to the world are compatible with the event still happening are different between the two events. And perhaps that implies they are different events. Either way, we're going to want some kind of non-identity claim here.
+
+Third, ordinary events often, perhaps typically, are not overdetermined. We know what overdetermination looks like; like cleanup is needed because two guests spill their drinks at the exact same time. Cases like this are rare; ordinary events are not overdetermined in this way.
+
+Fourth, if an event has two non-identical causes, then it is overdetermined. That's what happens with the need for a clean up; this spill and that spill both cause a reaction on the host's part.
+
+What follows from all this is that the causal ordinary events cannot, at least typically, be  correctly described in both higher-level and lower-level terms. Assume that's not true, and there are true descriptions of the causal history of an event in both higher-level and lower-level terms. If the causal claim is true, there must be events that are picked out as the causes in each claim. (That's our first assumption.) The descriptions will pick out different events, since one is higher-level and one lower-level. (That's our second assumption.) So the event is overdetermined - our fourth assumption lets us derive that. But that contradicts the third assumption that the events aren't overdetermined. If one adds the assumption that every event does have a causal explanation in microphysical terms, it follows that there are no true causal claims in the language of any other science.
+
+Now I've introduced the problem without once mentioning the possibility that the higher-level description is psychological, and the lower-level description is physical. This is unusual; the problem usually arises because people are particularly interested in mental causation. But it's not a new point that the problem arises across all sciences; it's one that Jerry Fodor [-@Fodor1989] makes as well. I do think the focus on mental causation, and the historical baggage of The Mind Body Problem, has distorted the debate. Whether or not that's true, a core question at issue in many of these papers is whether the exclusion problem shows that there is no mental causation. Or, perhaps more plausibly, whether it shows that some views about the metaphysics of mind are committed to there being no mental causation, and are thereby refuted.
+
+Now to worry about mental causation on these grounds requires that one take the assumptions seriously. And at least two of the assumptions seem seriously problematic.
+
+Well before the literature on the problem got going, Alvin Goldman [-@Goldman1969] had pointed out that the fourth assumption is clearly false as stated. If C1 causes C2, which in turn causes E, then both C1 and C2 are causes of E, and they are distinct. But being the output of a causal chain is not the same thing as being overdetermined. So the fourth assumption needs to be qualified, perhaps by saying that if E is caused by non-identical C1 and C2, then it is overdetermined unless, perhaps, one of them causes the other. This was very much a minority view in the 2000s, but I think everything falls apart here. Once you see some qualification is needed, every strange consequence of the principle just looks like a reason for thinking we haven't quite got the qualification right.
+
+But we can argue for this more directly. Imagine a documentary about interwar Germany where the narrator portentiously intones, "Ultimately, the collapse of the Weimar Republic was overdetermined. It was doomed both by the astronomical rises in the prices of everyday essentials, and by the high inflation rate." This just sounds absurd.^[It also seems implausible that an inflation ending in 1923 could cause the collapse of a Republic 10 years later, but that hasn't stopped some inflation hawks from arguing that it did [@HillEtAl1977] - https://www.jstor.org/stable/4224593 ] Even before we have a theory of overdetermination, we can simply see that something has gone wrong.
+
+One thing that might have gone wrong is that the inflation rate just is, in some sense, the rise in prices of individual goods. And surely in some sense that's right. And so one of the responses to the exclusion problem was to reject the second assumption and deny that the higher-level and lower-level descriptions pick out different things. In the context of The Mind Body Problem, this meant endorsing some kind of of mind-brain identity theory.
+
+As I said, there is surely something to this idea, but there are challenges ahead. For one thing, it's generally quite hard to say with any precision what the relationship between higher-level and lower-level descriptions is. Even when the descriptions are very similar, such as describing individual price changes and the economy wide inflation rate, it's hard to pin down a precise relationship.^[To get a sense of the theoretical challenges here, it's worth going back to an essay that @Keynes1909 wrote while still a philosophy graduate student.] For another, the higher-level and lower-level descriptions have different truth conditions, which suggest they pick out events with different modal profiles, which suggests they aren't the same event. None of these problems are insuperable, though; they all feel like reasons to get into the hard work of describing and defending an identity theory.
+
+Dialectically, the fact that there are these two responses is a real problem for the philosophical significance of the problem. It is natural to reject out of hand the conclusion that mental causation is impossible. We know that people sometimes walk to the fridge because they want a beer, and this is more plausible than any claim about the right analysis of the notion of overdetermination. But still, if there was one assumption that was clearly less plausible than the rest, the implausibility of the conclusion would be a good argument for the falsity of that assumption. When we have multiple implausible assumptions, we can't even use the problem as a reductio of one particular assumption.
+
+And those two problems hardly exhaust the difficulties in turning the exclusion problem into an argument against mental (or special science) causation. I already mentioned that the problem doesn't seem to get going if you don't start with the picture of causation as a binary relation between event. But perhaps a deeper problem was noted by Karen @Bennett2003. Imagine that I want a beer, and so walk to the fridge. Let _P_ be a full description of my physical state, including my brain state, just before I start walking. The worry is that _P_ causes the walking, so my desire can't also cause it on main of overdetermination. But as Bennett points out, it isn't obvious just what _P_ causes. After all, if _P_ hadn't happened, then probably something incredibly similar to _P_ would have happened; perhaps one particle somewhere would have just zigged rather than zagged. And then I probably still would have walked to the fridge. Bennett exploits this fact to propose a new account of when overdetermination is problematic. But I think we could just as well use it to deny that _P_ is causally relevant to my walking to the fridge.
+
+So ultimately I'm a little sceptical about how much we can learn from thinking about the exclusion problem. There are so many plausible responses, that it is hard to even use the problem to motivate one of them rather than the others. There are, however, two other threads in this topic that are more promising.
+
+One traces back to the argument that Jerry Fodor [-@Fodor1974] made from the multiple realizability of special science properties to the autonomy of the special sciences. There remains a lively debate about just what multiple realizability even is, and whether the fact of it (if it is a fact) raises a challenge for reductionist accounts of the special sciences (whatever reductionism is). We'll return to this question when we talk about [Mechanisms](#topten-mechanisms). For more on this, see @Bickle2020.
+
+Another concerns the appropriateness of causal claims at different levels. Sometimes even if both levels of description make true claims, one of them seems more appropriate than the other. It's much more common that governments lose popularity because of inflation than because of rises in the prices of particular goods and services. In these cases, the higher-level causal claim sounds much better. But imagine I have a lemonade stand, and one week the price of lemons triples, while everything else stays the same. I can't handle the higher prices, and my business folds. You could say that the 0.1% inflation (or whatever tripling the price of lemons does to overall inflation) caused my business to fail; but it's better to say that it failed because of an increase in the price of lemons. 

@@ -1,0 +1,131 @@
+# Political
+
+```{r j01-setup}
+current_topic <- "Political"
+current_topic_table <- topics_big_table %>% 
+  filter(cat_field == current_topic)
+
+for (ijk in 1:nrow(current_topic_table)){
+  cat("- [",current_topic_table$cat_real_name[ijk],"](#t-",current_topic_table$cat_shortcode[ijk],")\n", sep="")
+}
+```
+
+```{r t137a}
+jjj <- 137 
+source('appendix-data.R') 
+temp_dt
+```
+
+```{r t137b, fig.height = 4, fig.cap = cap_text, fig.alt = alt_text}
+source('appendix-graphs.R') 
+p1+p2
+```
+
+```{r t137c}
+source('appendix-tables.R') 
+```
+
+```{r t138a}
+jjj <- 138 
+source('appendix-data.R') 
+temp_dt
+```
+
+```{r t138b, fig.height = 4, fig.cap = cap_text, fig.alt = alt_text}
+source('appendix-graphs.R') 
+p1+p2
+```
+
+```{r t138c}
+source('appendix-tables.R') 
+```
+
+```{r t139a}
+jjj <- 139 
+source('appendix-data.R') 
+temp_dt
+```
+
+```{r t139b, fig.height = 4, fig.cap = cap_text, fig.alt = alt_text}
+source('appendix-graphs.R') 
+p1+p2
+```
+
+```{r t139c}
+source('appendix-tables.R') 
+```
+
+```{r t140a}
+jjj <- 140 
+source('appendix-data.R') 
+temp_dt
+```
+
+```{r t140b, fig.height = 4, fig.cap = cap_text, fig.alt = alt_text}
+source('appendix-graphs.R') 
+p1+p2
+```
+
+```{r t140c}
+source('appendix-tables.R') 
+```
+
+```{r t141a}
+jjj <- 141 
+source('appendix-data.R') 
+temp_dt
+```
+
+```{r t141b, fig.height = 4, fig.cap = cap_text, fig.alt = alt_text}
+source('appendix-graphs.R') 
+p1+p2
+```
+
+```{r t141c}
+source('appendix-tables.R') 
+```
+
+```{r t142a}
+jjj <- 142 
+source('appendix-data.R') 
+temp_dt
+```
+
+```{r t142b, fig.height = 4, fig.cap = cap_text, fig.alt = alt_text}
+source('appendix-graphs.R') 
+p1+p2
+```
+
+```{r t142c}
+source('appendix-tables.R') 
+```
+
+```{r t143a}
+jjj <- 143 
+source('appendix-data.R') 
+temp_dt
+```
+
+```{r t143b, fig.height = 4, fig.cap = cap_text, fig.alt = alt_text}
+source('appendix-graphs.R') 
+p1+p2
+```
+
+```{r t143c}
+source('appendix-tables.R') 
+```
+
+```{r t144a}
+jjj <- 144 
+source('appendix-data.R') 
+temp_dt
+```
+
+```{r t144b, fig.height = 4, fig.cap = cap_text, fig.alt = alt_text}
+source('appendix-graphs.R') 
+p1+p2
+```
+
+```{r t144c}
+source('appendix-tables.R') 
+```

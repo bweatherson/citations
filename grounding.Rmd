@@ -1,2 +1,104 @@
 ## Grounding {#topten-grounding}
 
+:::{#grounding-graph style="float:right; width:60%"}
+
+```{r grounding-graph, fig.height=4, fig.width=4.5, fig.cap=cap_text}
+jjj <- 108
+the_cat <- topics_big_table$cat_num[jjj]
+target_articles <- round_three %>% filter(cat_num == the_cat)
+active_precursors <- precursors %>% filter(cat_num == the_cat)
+category_properties <- category_years %>% filter(cat_num == the_cat)
+source('appendix-graphs.R') 
+p1
+cap_text <- paste0("Frequency of articles in ", category_properties$cat_real_name[1], " across all journals from 2000-2019")
+
+journal_distribution <- target_articles %>%
+  group_by(journal) %>%
+  tally(wt = s) %>%
+  arrange(-n) %>%
+  mutate(n = round(n, 2)) %>%
+  slice(1:10)
+```
+:::
+
+<br><br>
+
+**Articles**: `r round(category_properties$n[1],1)`
+
+**Citations**: `r round(category_properties$c[1],1)`
+
+**Mean Year**: `r toString(round(category_properties$y[1],2))` <br>
+**Relative Age**: `r category_properties$y_rank[1]` <br>
+**Age in Group 1**:  `r category_properties$class_y_rank[1]` 
+
+**Primary Journals**
+
+1. `r journal_distribution$journal[1]`
+2. `r journal_distribution$journal[2]`
+3. `r journal_distribution$journal[3]`
+
+:::{#grounding-papers style="clear:both"}
+
+```{r grounding-papers}
+cat("**Most Cited Articles**\n\n")
+
+target_articles <- round_three %>% filter(cat_num == the_cat)
+cat("::: apa-reference \n\n")  
+for (jj in 1:5){
+  cat(target_articles$longcite[jj], " \n\n", sep="")
+}
+cat(":::\n\n")
+
+cat("<br>**[Full Data](#t-Grounding)**\n\n")
+
+```
+
+:::
+
+<br>
+
+**Comments**
+
+Hello world
+
+
+- Meister Eckhart intro/joke
+- General idea of dependence: Vegemite/Marmite; Fodor; Euthyphro; inflation rates
+- Trace back to Hare (via Berker) - compare to Vegemite/Marmite example
+- Then asymmetric modal variation via Davidson (A can change without B changing, but B can't change without A changing)
+- We've come to define supervenience as something like this - but this is anachronistic
+- Worries about this: dependence between necessarily connected. Moral cases maybe, membership and sets
+- Kit Fine as central to the story; maybe briefly summarise big contributions (not others, Bennett 2004, me 2004, using in virtue of, but worrying)
+- Technical variation: operator or relation; if relation what are the relata, and how many are there
+- Bigger question: is there a single relation, a tightly connected family, or a loosely connected family
+    See Raven 2018 as a helpful source here
+- Related question: how do these connect to fundamentality
+- Much bigger picture: hyper-realism; just posit that in virtue of is real!
+- Not quite sure how to finish this, but I think that's basically where to go
+
+
+We start with the basic idea that some facts depend on other facts. How good something is can't be a basic fact about the world. So think about the fact, familiar to most Australians, that Vegemite is good while Marmite is bad. Whatever you think explains this, it does need some explanation. It is implausible, verging on incoherent, to say that Vegemite and Marmite are alike in all other respects, save that one is good and one is bad. A similar point is made by Fodor in his famous quip that "If meanings are real, they must really be something else." [Add citation.] The idea is hardly a new one. One of the key questions in Plato's _Euthyphro_ concerns this kind of direction of explanation: are things loved by the gods because they are pious, or pious because they are loved by the gods? Or, to return to a familiar example, think about the relationship between the overall price level and the prices of individual goods. The price level consists in, or exists in virtue of, the prices of individual goods. But the prices of individual goods are not in any way constituted by the price level.
+
+The modern history of this notion of dependence is well told in Selim Berker's "The Unity of Grounding" [-@Berker2018]. A key discussion is in R. M. Hare's 1952 book _The Language of Morals_ [-@Hare1952]. Hare identifies the the key notion with an example (which I modified to the Vegemite/Marmite example), and says that when some facts (e.g., facts about goodness) depend on other facts (e.g., facts about physical attributes), the first kind of fact _supervenes_ on the second kind. To a modern reader, this terminology will be surprising. Supervenience is usually taken to pick out not dependence, but a particular modal relationship that might be part of the analysis of dependence. Imagine that A can vary without B varying, but B can't vary without A varying. This happens most clearly in the case of individual prices and the price level. You can change the individual prices without changing the price level (as long as the changes offset), but you can't change the price level without changing the prices of something. These days, supervenience is usually defined as being concerned with which things can and can't be changed independently.
+
+But can we analyse dependence this way? Berker notes that a clear suggestion that we can is made by Donald Davidson  [-@Davidson1970]. Davidson suggests all cases of dependence are like the price level and individual prices. If A must change for B to change, but B can stay the same while A changes, that's what it is for B to depend on A. But, as Berker also notes, problems arose for this view very quickly. Depending on what views one has about the modal status of gods and piety, one might think the Euthyphro case is already a problem for the Davidsonian view. Arguably there could be an asymmetric dependence relation between _being pious_ and _being loved by the gods_ even if, as a matter of necessity, the two notions picked out the same things. But the example that really convinced everyone was due to Kit Fine [-@Fine1994]. He argued that the existence of the singleton set {Socrates} depends on the existence of Socrates, but not vice versa. But you can't account for that in modal terms. Necessarily, singleton {Socrates} exists just in case Socrates himself exists. So dependence, in the sense we're interested in, can't be analysed the way Davidson wanted.
+
+Kit Fine becomes the single most important figure in the story from this point onwards. The example involving Socrates wasn't originally part of his work on grounding. It was the center of an argument that we shouldn't understand essence in modal terms. Even though it is necessary that if Socrates exists, so does his singleton, Fine argued that it is not part of Socrates's essence that his singleton exists. But Fine came to think that essence and ground are closely related [@Fine2015], and in any case the example has been central in many other philosophers' motivations for adopting non-modal approaches to dependence.
+
+Fine's first discussion of grounding comes in his 2001 paper in the newly launched open access journal _Philosophers' Imprint_: "The Question of Realism" [-@Fine2001]. It was not an overnight success. Imprint isn't indexed in Web of Science, but we can look at Google Scholar to get a rough sense of its impact. (To understand the scale of the following numbers, remember that Google Scholar cites tend to run about 10 times higher than citations in philosophy journals indexed in Web of Science.) Through its first five years, to 2005, it only had 15 citations. Through 2010, ten years after publication, it had 107 citations. A respectable number, but hardly a sign of a genre defining paper. It had more citations than that in 2020 alone.
+
+The turning point was around 2010. There was an explosion of interest both in grounding as Fine understood it, and in the more general question of metaphysical dependence and structure. The key papers from this time period on grounding in particular are by Jonathan Schaffer [-@Schaffer2009], Gideon Rosen [-@Rosen2010], Karen Bennett [-@Bennett2011a] and, unsurprisingly, Kit Fine [-@Fine2010, -@Fine2012]. And as well as those papers, there are important works on the broader idea of metaphysical structure by Jonathan Schaffer [-@Schaffer2010], Ted Sider [-@Sider2011] and Karen Bennett [-@Bennett2011b].^[Annoyingly, the 2010 paper by Schaffer is miscoded as a review article in Web of Science, so it isn't included in this study.] The works about structure are often concerned to push a revision in how metaphysics as a discipline had been understood since @Quine1953. Quine had convinced most metaphysicians that the key question in metaphysics is _What exists?_. And a common thread through these works is that this question should be replaced, or at the very least supplemented, with the question _What depends on what?_.
+
+Once we have this idea that dependence is important, and grounding can usefully illuminate it, a lot of questions open up about what grounding is. A natural picture is that it is a relation, but not everyone agrees; @Fine2012 for instance thinks it is a sentential operator. If it is a relation, what are the relata? A natural picture is that it is facts, but again not everyone agrees; @Schaffer2009 thinks that the relata could be from almost any ontological category. If the relata are facts, does the relation hold between individual facts, or between sets or pluralities on one or other side? And to a first approximation, every possible answer to this question has been defended somewhere.
+
+A more philosophically important question is whether there is an important thing, grounding, that is central to understanding structure and dependence. While many metaphysicians say there is, there is a notable band of dissenters. The dissenters I'm referring to here agree that we should move away from the Quinean focus on existence questions, and pay more attention to questions about dependence and structure. But, they argue, we should not expect to find any single relation (or operator) at the heart of the resulting story. Rather, we should be pluralists about dependence relations, and expect to find a more or less tight family resemblence between these dependence relations. So, for instance, it's true that a set depends on its members, and a mental state depends on an underlying physical state, but there is no metaphysically significant relation that underlies both kinds of dependence, or all the other kinds of dependence there are. Versions of this kind of view (with of course great variation in the details) are defended by Jessica Wilson [-@Wilson2014], Kathrin Koslicki [-@Koslicki2015], Mari Mikkola [-@Mikkola2015] and Karen Bennett [-@Bennett2017].
+
+One advantage of these pluralist views is that it is easy to identify and at least somewhat understand the plural relations that they think collectively explain dependence.^[I should note that Bennett [-@Bennett2017, 34] disapproves of 'dependence' talk in this context, preferring to talk of building. Her reason is that in cases of over-determination, when one thing is fully built from two other things, like the way an existential fact might be fully built from each of two instances, the built thing does not depend on either.] We learn about things like the set-membership relation and the part-whole relation (to pick out two plausible examples of dependence relations) well before we get to university metaphysics classes. If there is an overarching notion, what is it? How can we understand it in non-technical language? One answer is to identify it with what we're talking about when we say something is true _in virtue of_ something else. Another is to identify it with a distinctively metaphysical kind of _explanation_. And yet another is to say that these two notions pick out the same thing, so grounding is really each of them. I think the 'in virtue of' talk is most perspicuous, and closest to something like ordinary language, but like everything here, this is a matter of some contention.
+
+This matters because it affects how we think about one of the lively debates within this literature: what grounds grounding facts? In my less charitable moments, I feel like this is the "How many angels on the head of a pin?" question of modern times. But let's be more charitable than that, and look at an example. Facts about the price level are grounded in facts about individual prices, plus perhaps facts about tastes. That last sentence is true, i.e., expresses a fact. What grounds that fact? Is it ungrounded? Most theorists identify ungrounded facts with fundamental facts, and are sceptical that there are fundamental facts about the price of apples, so they don't like this option. So what else could do it? One possible answer is that it is grounded in the prices of individual items - if A grounds B, then A grounds A grounding B. Or, perhaps more plausibly, it is grounded in whatever grounds A - unless A is fundamental, in which case it is true that A grounds A grounding B. @Dasgupta2014 argues that this sounds bad when you understand grounding in terms of explanation, and I am inclined to agree that it does. But I'm not sure it sounds so bad when you understand grounding in terms of dependence, or in terms of what is true in virtue of what. But dividing into this debate would take us much too deep into the weeds.
+
+To end, I want to note two ways in which this whole topic reflects the metaphysical spirit of the times. 
+
+The whole debate is shot through with a realist confidence that one doesn't see in European philosophy arguably since medieval times. In the 2000s, metaphysics seemed in the grip of a crisis of confidence. The concern we discussed in the entry on [Parthood](#topten-parthood), that metaphysical debates were really just disputes over alternative ways of saying things, was widespread. Even if most people thought it could be answered, it was a concern that needed answering. But then around the turn of the decade, there was a swing to a hyper-realist approach to metaphysics. It is the job of metaphysics to not just identify what there is, and how it is, but to talk about the real structural relations that underlie the visible reality. And for the most part, this is just a matter of regimenting our talk; ordinary talk of metaphysical dependence corresponds to real structural features of the world. 
+
+The second trend is a bit more recent. The early works on grounding and dependence sometimes were combined with a view that the key task of metaphysics was to identify, and describe, the truly fundamental, the layer on which all of metaphysics depends. That's something this early grounding work shares with, say, Eckhart. But due in no small part to arguments by Elizabeth Barnes [-@Barnes2014], those two views have come apart. Metaphysicians can, and do, care about structures, dependencies and the grounding relation or relations, without thinking that the foundational level of that structure is of particular importance. Indeed, they can even be sceptical that there is such a fundamental level. The idea that a key focus of metaphysics is structural relations between non-fundamental facts is well suited to the social turn across most of philosophy. For it is very natural to think that social metaphysics will spend a lot of time talking about structural relations among non-fundamental facts. And in the next chapter, we'll look at more ways in which metaphysicians have done exactly that.

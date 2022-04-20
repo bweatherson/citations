@@ -1,0 +1,28 @@
+---
+title: "Untitled"
+author: "Brian Weatherson"
+date: "4/27/2021"
+output: html_document
+---
+
+```{r echo=FALSE, comment = NA}
+for (jjj in 1:10){
+
+cat("```{r t",jjj,"a}\n",sep="")
+cat("jjj <- ",jjj, " \n",sep="")
+cat("source('appendix-data.R') \n")
+cat("temp_dt\n")
+cat("```\n\n")
+
+cat("```{r t",jjj,"b, fig.height = 4, fig.cap = cap_text, fig.alt = alt_text}\n",sep="") # Need to add caption and alt-text here, and make sure fig.height is correct
+cat("source('appendix-graphs.R') \n")
+cat("p1+p2\n")
+cat("```\n\n")
+
+cat("```{r t",jjj,"c}\n",sep="")
+cat("source('appendix-tables.R') \n")
+cat("```\n\n")
+
+
+}
+```

@@ -1,2 +1,95 @@
 ## Disagreement {#topten-disagreement}
 
+:::{#disagreement-graph style="float:right; width:60%"}
+
+```{r disagreement-graph, fig.height=4, fig.width=4.5, fig.cap=cap_text}
+jjj <- 9
+the_cat <- topics_big_table$cat_num[jjj]
+target_articles <- round_three %>% filter(cat_num == the_cat)
+active_precursors <- precursors %>% filter(cat_num == the_cat)
+category_properties <- category_years %>% filter(cat_num == the_cat)
+source('appendix-graphs.R') 
+p1
+cap_text <- paste0("Frequency of articles in ", category_properties$cat_real_name[1], " across all journals from 2000-2019")
+
+journal_distribution <- target_articles %>%
+  group_by(journal) %>%
+  tally(wt = s) %>%
+  arrange(-n) %>%
+  mutate(n = round(n, 2)) %>%
+  slice(1:10)
+```
+:::
+
+<br><br>
+
+**Articles**: `r round(category_properties$n[1],1)`
+
+**Citations**: `r round(category_properties$c[1],1)`
+
+**Mean Year**: `r toString(round(category_properties$y[1],2))` <br>
+**Relative Age**: `r category_properties$y_rank[1]` <br>
+**Age in Group 1**:  `r category_properties$class_y_rank[1]` 
+
+**Primary Journals**
+
+1. `r journal_distribution$journal[1]`
+2. `r journal_distribution$journal[2]`
+3. `r journal_distribution$journal[3]`
+
+:::{#disagreement-papers style="clear:both"}
+
+```{r disagreement-papers}
+cat("**Most Cited Articles**\n\n")
+
+target_articles <- round_three %>% filter(cat_num == the_cat)
+cat("::: apa-reference \n\n")  
+for (jj in 1:5){
+  cat(target_articles$longcite[jj], " \n\n", sep="")
+}
+cat(":::\n\n")
+
+cat("<br>**[Full Data](#t-Disagreement)**\n\n")
+
+```
+
+:::
+
+<br>
+
+**Comments**
+
+Let's start with an example. Two friends, call them A and B, are discussing Russian history. And in particular, they are discussing the various military catastrophes at what was then called Port Arthur. But they can't remember quite where Port Arthur is, or for that matter what it's now called. A is pretty confident it was on the Shandong Peninsula, while B is pretty confident that it was on the Liaodong Peninsula. In the past, when they've disagreed about questions like this, they have each been right equally often. And neither has any independent reason to believe that they are the correct one this time, independent that is of their original reasons for believing that Port Arthur is on one or other of these peninsulas.
+
+Now in fact Port Arthur, or Lüshunkou to give it its correct name, is on the Liaodong. And let's assume that B believes this for perfectly good reasons; they read it in a reliable book and retained the information. On the other hand, A has just made an error; they confused stories about Russian and German attempts to expand into northeastern China. Given all this, what should A and B believe?
+
+A lot of people have the intuition in cases like this that A and B should _conciliate_; they should each adopt some attitude between their initial attitudes. Some writers, such as Adam Elga [-@Elga2007], say that they should each adopt a credence that's half way between the initial credence. But let's not build that into the definition of 'conciliate'; instead let's just let that mean that they should each move substantially in the direction of the other's view. Call the view that each should conciliate in this sense _conciliationism_.^[For much more on all the theories that I'm discussing here, see @FrancesMatheson2018. That paper has been invaluable to me in writing this section, not least in pointing me to relevant citations.]
+
+There are a few ways in which one might deny conciliationism. One is to say that each party should have some amount of 'self-trust'. Even in light of their friend's view, each party should to a large extent stick to their original view. I'm going to mostly set that view aside here.^[See section 5.2 of @FrancesMatheson2018 and the authors cited therein for many more details.] Instead I'm going to focus on views that deny the independence principle that's at the heart of conciliationism. The conciliationist says that once the disagreement has been joined, B can't simply rely on the evidence for their original belief to conclude that they are in the right in this dispute. And some anti-conciliationists with broadly evidentialist leanings object at this point. That evidence hasn't gone away, and B should be able to draw on it. Views in this broad family are defended by Jennifer Lackey [-@Lackey2010a; -@Lackey2010b], Thomas Kelly [-@Kelly2005; -@Kelly2010; -@Kelly2013] and Maria Lasonen-Aarnio [-@LasonenAarnio2013]. And I defend a version of a view like this in my book _Normative Externalism_ [@Weatherson2019].
+
+One problem for the conciliationist, emphasised by Lackey [-@Lackey2010a], concerns cases where one party is obviously wrong. So imagine a version of our initial case where A thinks that Port Arthur, where the Russians had a military base until 1905, is on the Tasman Peninsula south of Hobart. In this case there is not even an intuition that B should conciliate. (Or, to be more careful, I don't feel any such intuitive pull. Maybe some people disagree.) But it's hard to see how the conciliationist could get the result that B should stick to their view. After all, all their evidence that the Port Arthur in question is in northeastern China is not independent of the dispute with A. But if B can retain their pre-disagreement evidence, it is easy to see how they can conclude that A is wrong in this case.
+
+Set that aside, and go back to the original case of a non-obvious disagreement. From a certain theoretical perspective, it's hard to see why A and B should treat the two hypotheses symmetrically. They do have a reason to give some credence to the hypothesis that Port Arthur was on the Shandong Peninsula; a reasonably reliable person, namely A, said so. But they have just as good evidence that it was on the Liaodong Peninsula; a reasonably reliable person, namely B, said so. And they have yet more evidence for that hypothesis, namely all the books that B drew on to form their geographical beliefs. @Kelly2010 argues that this means conciliationists are treating an asymmetric case symmetrically; they are ignoring the fact that this earlier evidence is a tie-breaker.
+
+Conciliationism also has a problem with disagreements about disagreement [@Weatherson2013]. Given that there are all these anti-conciliationists like Lackey and Kelly around, conciliationists should agree that there is a disagreement between smart, well-informed people about disagreement. So they should conciliate on the subject matter of this disagreement. That is, they shouldn't believe, at least with any conviction, that conciliationism is correct. Now this doesn't immediately show that conciliationism is false; maybe it is true but impossible to rationally believe. But as we'll see in a bit, there are reasons for thinking this is a deep problem for conciliationism, not just a debating point.
+
+Conciliationism also invites a kind of epistemic laundering [@Kelly2014; @Tal2021]. Assume that A had no real evidence for their belief; it was just a simple confusion. The conciliationist now thinks that the reasonable attitude to take towards the view they put forward is that it is as likely as not to be true. This seems absurd - making a mistake shouldn't raise the probability of a hypothesis with no evidence behind it all the way to 50%.
+
+I've been stressing the problems for conciliationism a lot here. Doubtless this is in part because of my partisan leanings on this debate. But I also think it reflects a structural feature of the debate. There are fewer arguments for conciliationism, and especially fewer arguments from theoretical principles for conciliationism, than there are for anti-conciliationism. What conciliationism has going for it are some very powerful thought experiments, like the one I started with. So a lot of the literature consists of a conciliationist describing a case like this, noting (entirely correctly) that conciliationism would be a good explanation of the example, then replying to objections that anti-conciliationists have made. So it's worth noting that there are replies to every one of the anti-conciliationist arguments I've made in the literature; indeed, I would guess the median article in this topic is a conciliationist reply to an anti-conciliationist argument.
+
+There are a number of models of how and why conciliationism should be true, but one of these is of particular theoretical interest. Say something is _higher order evidence_ for a thinker with respect to some proposition _p_ if it isn't evidence for or against _p_, but it is evidence that is relevant to how reliable the person is with respect to _p_, or about whether their evidence supports _p_. Here is one popular model for how conciliationism works. The fact that a reliable person, namely A, disagrees with B is higher order evidence that B is unreliable on this question. In general, when one gets higher order evidence that one is unreliable on a question, one should withhold belief on all matters pertaining to that question, unless one has independent evidence to override the higher order evidence. So, B should withhold belief about which peninsula Port Arthur was on.
+
+Now one reason this is theoretically interesting is that the premise that one should withhold belief after receiving discouraging higher order evidence could be endorsed even if the premise that disagreement provides higher order evidence was rejected. For example, If one is worried about cases where A makes an obvious error, saying that disagreement sometimes, but not always, provides higher order evidence is a natural fallback position. So this question, of whether higher order evidence can defeat belief, has become independently interesting.
+
+The question of how to treat higher order belief is hardly independent from the question of how to treat disagreement. Most of the criticisms of the conciliationist view I listed above can be turned into criticisms of the view that higher order evidence can defeat belief. And there is a question of why higher order evidence should satisfy what in _Normative Externalism_ I called 'epistemic gravity'. (I owe this helpful term to Stewart Cohen.) If a person gets evidence that _p_, and evidence that they are unreliable about forming beliefs on whether _p_, it's possible that the latter, the higher order evidence, defeats the former. But what should we say about cases where a person gets quite equivocal evidence that _p_, is appropriately reluctant to treat _p_ as more than somewhat likely, then learns that they are in general disposed to be too cautious about questions like _p_? It seems weird to increase their confidence in _p_ on this basis. Higher order evidence can pull confidence down (like gravity), but it can't push it up.
+
+For all that, there is to my mind one big difference between the two debates. The view that higher order evidence can defeat belief can be defended by interesting theoretical principles, and not just appeal to cases. One such principle is that rational thinkers should not be _akratic_; they should not both have an attitude and think that that attitude is inappropriate. Perhaps they should not even have an attitude and suspend judgement on whether that attitude is appropriate. Another principle, somewhat related, is that thinkers should be calibrated. They should have an attitude _A_ only if they think the right attitude to have, given the evidence that they have _A_, is _A_. If one thinks that having an attitude is evidence that attitude is the wrong one to have, one shouldn't have that very attitude. This principle is, I think, too strong; it rules out the kind of asymmetry described in the previous paragraph. But anti-akrasia principles are very popular, and whether one can be precisely formulated in a way that is invulnerable to counterexamples and objections remains a live topic of debate.
+
+I'll end by noting two other points about this topic, one very technical, and one more big picture.
+
+The technical point goes back to the question of how to formally model conciliation. As I mentioned, Adam Elga [-@Elga2007] made the natural suggestion that if the parties each have numerical credences in a particular proposition, the way to conciliate between them is to simply add up those credences and divide by 2. (Or, if there are _n_ participants to the debate, add up and divide by _n_.) It turns out there are some surprising bad consequences of this view; it leads to certain kinds of dynamic inconsistency. In particular, whether you conciliate before or after learning some common bit of information makes a difference in a way that feels inappropriate. I used to think that this was a reason to reject conciliationism, but this was a mistake; it's just a reason to reject this model of how to conciliate. And there are better ways to conciliate between two views. If you want more detail, either of the problems for using this kind of linear averaging or some possible solutions, see @RussellEtAl2015, or @EaswaranEtAl2016.
+
+The big picture point relates to the central theme of this book. How to resolve disagreement is an essentially social question. Before 2007, when key papers setting out and defending conciliationism were published by Adam Elga [-@Elga2007] and David Christensen [-@Christensen2007], the focus of contemporary epistemology had been mostly individualistic. These papers weren't the only reasons that 2007 marked a shift towards renewed attention on matters that essentially involve interactions between people. But they were important reasons. And as we'll see repeatedly throughout this book, a heightened attention to social questions was a feature of most fields of philosophy in the 2010s.
+
+Tal2021 - https://www.cambridge.org/core/journals/episteme/article/disagreement-and-easy-bootstrapping/6C411D7A64D95C5B54D23DF30EACAAA7
+

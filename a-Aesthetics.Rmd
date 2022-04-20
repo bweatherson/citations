@@ -1,0 +1,120 @@
+# (APPENDIX) Appendix {-} 
+
+```{r appendix-start}
+extrafont::loadfonts()
+require(scales)
+require(patchwork)
+
+graph_color <- function(x){
+  case_when(x == "Aesthetics" ~ hcl(h = 15, l = 65, c = 100),
+            x == "Epistemology" ~ hcl(h = 45, l = 65, c = 100),
+            x == "Ethics" ~ hcl(h = 75, l = 65, c = 100),
+            x == "Free Will" ~ hcl(h = 105, l = 65, c = 100),
+            x == "Kant" ~ hcl(h = 135, l = 65, c = 100),
+            x == "Language" ~ hcl(h = 165, l = 65, c = 100),
+            x == "Logic" ~ hcl(h = 195, l = 65, c = 100),
+            x == "Metaphysics" ~ hcl(h = 225, l = 65, c = 100),
+            x == "Mind" ~ hcl(h = 255, l = 65, c = 100),
+            x == "Political" ~ hcl(h = 285, l = 65, c = 100),
+            x == "Science" ~ hcl(h = 315, l = 65, c = 100))
+}
+
+# Plan is to break this up into sections by type
+# So 11 Appendicies - each with subsections
+# Well, some of them only have one subsection
+# But right now the list is too long and unreadable
+# Not sure how to do this in an adjustable way
+```
+
+# Aesthetics
+
+```{r a01-setup}
+current_topic <- "Aesthetics"
+current_topic_table <- topics_big_table %>% 
+  filter(cat_field == current_topic)
+
+for (ijk in 1:nrow(current_topic_table)){
+  cat("- [",current_topic_table$cat_real_name[ijk],"](#t-",current_topic_table$cat_shortcode[ijk],")\n", sep="")
+}
+```
+
+
+
+```{r t1a}
+#Burp
+jjj <- 1 
+source('appendix-data.R') 
+temp_dt
+```
+
+```{r t1b, fig.height = 4, fig.cap = cap_text, fig.alt = alt_text}
+#Burp
+source('appendix-graphs.R') 
+p1+p2
+```
+
+```{r t1c}
+#Burper
+source('appendix-tables.R') 
+```
+
+```{r t2a}
+jjj <- 2 
+source('appendix-data.R') 
+temp_dt
+```
+
+```{r t2b, fig.height = 4, fig.cap = cap_text, fig.alt = alt_text}
+source('appendix-graphs.R') 
+p1+p2
+```
+
+```{r t2c}
+source('appendix-tables.R') 
+```
+
+```{r t3a}
+jjj <- 3 
+source('appendix-data.R') 
+temp_dt
+```
+
+```{r t3b, fig.height = 4, fig.cap = cap_text, fig.alt = alt_text}
+source('appendix-graphs.R') 
+p1+p2
+```
+
+```{r t3c}
+source('appendix-tables.R') 
+```
+
+```{r t4a}
+jjj <- 4 
+source('appendix-data.R') 
+temp_dt
+```
+
+```{r t4b, fig.height = 4, fig.cap = cap_text, fig.alt = alt_text}
+source('appendix-graphs.R') 
+p1+p2
+```
+
+```{r t4c}
+source('appendix-tables.R') 
+```
+
+```{r t5a}
+jjj <- 5 
+source('appendix-data.R') 
+temp_dt
+```
+
+```{r t5b, fig.height = 4, fig.cap = cap_text, fig.alt = alt_text}
+source('appendix-graphs.R') 
+p1+p2
+```
+
+```{r t5c}
+source('appendix-tables.R') 
+```
+

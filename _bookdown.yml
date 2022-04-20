@@ -1,0 +1,40 @@
+  book_filename: "citation-bookdown"
+  view: https://github.com/bweatherson/lda-bookdown/blob/master/%s
+  delete_merged_file: true
+  keep_md: yes
+  language:
+    label:
+      tab: "Table "
+    ui:
+      chapter_name: ""
+  rmd_files: 
+    ["index.Rmd", 
+    "topten.Rmd", 
+      "parthood.Rmd",
+      "disagreement.Rmd",
+      "exclusion.Rmd",
+      "relativism.Rmd",
+      "perceptual_content.Rmd",
+      "contextualism.Rmd",
+      "justification.Rmd",
+      "grounding.Rmd",
+      "reasons.Rmd",
+      "mechanisms.Rmd",
+    "social.Rmd", 
+    "rise_fall.Rmd", 
+    "fields.Rmd", 
+    "connections.Rmd",
+    "miss.Rmd",
+    "itinerary.Rmd",
+    "a-Aesthetics.Rmd",
+    "b-Epistemology.Rmd",
+    "c-Ethics.Rmd",
+    "d-FreeWill.Rmd",
+    "e-Kant.Rmd",
+    "f-Language.Rmd",
+    "g-Logic.Rmd",
+    "h-Metaphysics.Rmd",
+    "i-Mind.Rmd",
+    "j-Political.Rmd",
+    "k-Science.Rmd"
+   ]

@@ -1,2 +1,88 @@
 ## Justification {#topten-justification}
 
+:::{#justification-graph style="float:right; width:60%"}
+
+```{r justification-graph, fig.height=4, fig.width=4.5, fig.cap=cap_text}
+jjj <- 15
+the_cat <- topics_big_table$cat_num[jjj]
+target_articles <- round_three %>% filter(cat_num == the_cat)
+active_precursors <- precursors %>% filter(cat_num == the_cat)
+category_properties <- category_years %>% filter(cat_num == the_cat)
+source('appendix-graphs.R') 
+p1
+cap_text <- paste0("Frequency of articles in ", category_properties$cat_real_name[1], " across all journals from 2000-2019")
+
+journal_distribution <- target_articles %>%
+  group_by(journal) %>%
+  tally(wt = s) %>%
+  arrange(-n) %>%
+  mutate(n = round(n, 2)) %>%
+  slice(1:10)
+```
+:::
+
+<br><br>
+
+**Articles**: `r round(category_properties$n[1],1)`
+
+**Citations**: `r round(category_properties$c[1],1)`
+
+**Mean Year**: `r toString(round(category_properties$y[1],2))` <br>
+**Relative Age**: `r category_properties$y_rank[1]` <br>
+**Age in Group 1**:  `r category_properties$class_y_rank[1]` 
+
+**Primary Journals**
+
+1. `r journal_distribution$journal[1]`
+2. `r journal_distribution$journal[2]`
+3. `r journal_distribution$journal[3]`
+
+:::{#justification-papers style="clear:both"}
+
+```{r justification-papers}
+cat("**Most Cited Articles**\n\n")
+
+target_articles <- round_three %>% filter(cat_num == the_cat)
+cat("::: apa-reference \n\n")  
+for (jj in 1:5){
+  cat(target_articles$longcite[jj], " \n\n", sep="")
+}
+cat(":::\n\n")
+
+cat("<br>**[Full Data](#t-Justification)**\n\n")
+
+```
+
+:::
+
+<br>
+
+**Comments**
+
+In the late 20th Century, there were three major views on epistemic justification: foundationalist, coherentist, and reliabilist.^[I'm simplifying here even more than usual. There were plenty of views other than these three. And there was more variation within those three views than might be clear from this description. What I'm calling 'foundationalism' might be better called 'internalist foundationalism', to note that some views that have the structure of foundationalist theories allow for external factors to be relevant to foundations. And when I say 'internalist' throughout this entry I'm always meaning 'mentalist internalist', as distinguished from 'access internalist'. And what I'm calling 'reliabilism' might be more accurately dubbed 'process reliabilism'. Having noted these simplifications, I will keep making them in the text in the interest of getting to the 21st Century in a reasonable time.] The foundationalists said that there are some propositions about our own mind or own perceptions that we can be sure about that, and justified beliefs are properly derived from those foundations. The coherenists said that our beliefs are justified to the  extent that they form a coherent whole; there is no one part that is special to their justification. And the reliabilists said that a belief of ours is justified to the extent that it is produced by a reliable process. All of these views were subject to multiple criticisms. I'll go over two criticisms for each, just to give a flavor of what was being discussed.^[For many more details, see @Silins2015 or @Steup2020.]
+
+The foundationalists had the problem of identifying which these foundational beliefs were. This is important, since the beliefs are supposed to be infallible. It's tempting to identify them with perceptual appearances. Obviously we can make mistakes about how the world is, but can we be mistaken about how the world appears? Well, we probably can. Consider the example, originally due to Roderick Chisholm [-@Chisholm1942], of the speckled hen. From a glance at a speckled hen, we can't form an infallible belief about the number of speckles it has on its visible side. But the nature of our experience settles that question. So we can be ignorant about our own experiences. And they had the problem of saying how we can get from beliefs about our own experiences to justified beliefs about the wider world. The usual strategy is to say that the external world is the best explanation of our experiences, but this seems dubious. The existence of the external world is, after all, a considerably less parsimonious explanation of the experiences than, say, an evil demon.
+
+The coherentists faced the problem of explaining what was wrong with a very careful, reflective, conspiracy theorist. The thing about conspiracy theories, really good ones anyway, is that they hang together well. Indeed, if the theory is really working, the core parts of the theory will do multiple jobs in explaining weird things about the world. It coheres really well. It's also really irrational! There is another more technical problem with coherentism. It is whole belief states that are more or less coherent. But individual beliefs within a belief state might be more or less justified. How, on a coherentist picture, can we say this one person has this justified belief, and this unjustified belief?
+
+Meanwhile the reliabilists faced two problems of their own. One problem, most forcefully pressed by Laurence BonJour [-@BonJour1980], was that it made justified beliefs too easy to acquire. Someone who by magic woke up with clairvoyant abilities would thereby get justified beliefs via clairvoyance, even if they had no reason to believe these abilities work. Another problem is what became known as the reference class problem. Reliability isn't a feature of an individual process, it's a feature of a class of processes. But any token process is a member of many different classes, and those classes will differ in reliability. 
+
+None of these six objections were knock-down, but none of them seemed particularly easy to overcome either. It felt like it was time to try something new. And the new thing that got the most attention, quite deservedly in my view, was the dogmatist theory developed by Jim Pryor [-@Pryor2000].
+
+The dogmatist view resembles most closely the foundationalist view, but it modifies it in several attractive ways. First, while it agrees that mental states, and in particular perceptual states, are in a sense foundational, it disagrees with the foundationalist about which features of them matter. For the dogmatist, it is not the belief that one is having an experience with such and such features that has a special justificatory status. Rather, it is when one has an experience as of the world being a certain way, then, in general, the belief that the world is that way is justified. By this move, the dogmatist skips over the hard problem for the foundationalist of how any beliefs about the external world are justified.
+
+Second, the dogmatist denies that this special kind of justification for perceptions is indefeasible. If one has evidence that one's experiences are deceptive, then one is not justified in believing that things are as they appear. In this respect, the dogmatist resembles the coherentist, who also says that any belief, no matter its origin, is defeasible if it doesn't fit with one's overall view.
+
+But to my mind the most important development was the third. Even though perceptual beliefs are defeasible, the dogmatist denies that they need independent justification. This was the really radical step. The orthodox view before Pryor's work was that belief forming mechanisms were either (a) defeasible, and in need of independent justification before they could be properly used, or (b) indefeasible, and not in need of any independent justification before they could be used. The vast bulk of mechanisms we use fall into category (a), but perhaps some fall into (b). When I move from the feeling of pain in my head to the belief that I have a headache, that's arguably an indefeasible mechanism that I don't need an independent reason to believe works. The key move in dogmatism was to say that the move from _It seems as if the world is thus and so_ to _The world is in fact thus and so_ is defeasible - it is defeated if one has evidence that things aren't as they seem - but not in need of any independent, or prior, justification. The person who takes for granted that things are as they seem could well be justified in doing so, even though they don't have any independent reason for taking things to be as they seem. This wasn't a completely novel idea - I think you can see it in the view of testimony developed by Tony Coady [-@Coady1992] - but putting it at the center of a theory of justification was a huge development.
+
+"The Sceptic and the Dogmatist" is the second most cited paper in the data set, so it isn't surprising that a large amount of the literature in this topic concerns issues it raises. I'm going to focus on two of these, at the expense of many other things that could be talked about. For instance, I'm going to skip over the many interesting attempts to apply the dogmatist picture to things other than perceptual justification.
+
+- Paragraph about White
+- Paragraph or two about cognitive penetration
+- Then Evil Demon problem (problem for reliabilism)
+- I'm interested in the two deceived people version
+- Victim is unjustified but blameless; link to epistemic blame
+- Then Problem of Easy Knowledge
+- I think best way out here is dogmatist; if there's a reason for doubt, problem doesn't get going - if there is not, there isn't a problem.
+- Finally something about propositional and doxastic justification
+- This links to Basing Problem and hence to reasons

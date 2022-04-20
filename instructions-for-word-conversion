@@ -1,0 +1,17 @@
+Best plan so far for getting into Word format
+
+1. Export to epub
+  Add to _output.yml a line "bookdown::epub_book: default"
+2. Convert to docx via pandoc
+  require(rmarkdown)
+  pandoc_convert("<<filename>>.epub", to = "docx", output = "<<filename>>.docx")
+  NOTE: This may require changing working directory
+  Doesn't seem to work with file in subdirectory
+3. In Word save as web page - this will put all graphics in a folder
+4. Go back through file and replace each graphic with a reference to file list
+  They *should* be in order
+  And they *should* have captions saved still
+
+NOTE
+
+Haven't yet figured out how this handles citations

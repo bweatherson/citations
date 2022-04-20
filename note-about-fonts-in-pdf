@@ -1,0 +1,5 @@
+Before compiling to PDF have to add
+
+extrafont::loadfonts()
+
+as line early in document - otherwise some of the graphs don't work

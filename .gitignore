@@ -2,3 +2,12 @@
 .Rhistory
 .RData
 .Ruserdata
+_book
+_bookdown_files
+backup_rdata
+big_table
+cache
+full-bibs
+j_phil_backups
+old_data
+processed_rdata

@@ -1,0 +1,32 @@
+---
+title: "Untitled"
+author: "Brian Weatherson"
+output: html_document
+---
+
+```{r echo=FALSE, comment = NA}
+for (jjj in 1:172){
+
+cat("```{r t",jjj,"a}\n",sep="")
+cat("jjj <- ",jjj, " \n",sep="")
+cat("source('appendix-data.R') \n")
+cat("temp_dt\n")
+cat("```\n\n")
+
+cat("```{r t",jjj,"b, fig.height = 4, fig.cap = cap_text, fig.alt = alt_text}\n",sep="") # Need to add caption and alt-text here, and make sure fig.height is correct
+cat("source('appendix-graphs.R') \n")
+cat("p1+p2\n")
+cat("```\n\n")
+
+cat("```{r t",jjj,"c}\n",sep="")
+cat("source('appendix-tables.R') \n")
+cat("```\n\n")
+
+
+}
+
+# Note that the code to run this is knitr::knit('code-generators/appendix-code-generator.Rmd').
+# This will produce an md file in the main directory, which is all you need
+# Probably delete that md file afterwards
+```
+

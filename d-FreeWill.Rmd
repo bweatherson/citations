@@ -1,0 +1,71 @@
+# Free Will
+
+```{r d01-setup}
+current_topic <- "Free Will"
+current_topic_table <- topics_big_table %>% 
+  filter(cat_field == current_topic)
+
+for (ijk in 1:nrow(current_topic_table)){
+  cat("- [",current_topic_table$cat_real_name[ijk],"](#t-",current_topic_table$cat_shortcode[ijk],")\n", sep="")
+}
+```
+
+```{r t66a}
+jjj <- 66 
+source('appendix-data.R') 
+temp_dt
+```
+
+```{r t66b, fig.height = 4, fig.cap = cap_text, fig.alt = alt_text}
+source('appendix-graphs.R') 
+p1+p2
+```
+
+```{r t66c}
+source('appendix-tables.R') 
+```
+
+```{r t67a}
+jjj <- 67 
+source('appendix-data.R') 
+temp_dt
+```
+
+```{r t67b, fig.height = 4, fig.cap = cap_text, fig.alt = alt_text}
+source('appendix-graphs.R') 
+p1+p2
+```
+
+```{r t67c}
+source('appendix-tables.R') 
+```
+
+```{r t68a}
+jjj <- 68 
+source('appendix-data.R') 
+temp_dt
+```
+
+```{r t68b, fig.height = 4, fig.cap = cap_text, fig.alt = alt_text}
+source('appendix-graphs.R') 
+p1+p2
+```
+
+```{r t68c}
+source('appendix-tables.R') 
+```
+
+```{r t69a}
+jjj <- 69 
+source('appendix-data.R') 
+temp_dt
+```
+
+```{r t69b, fig.height = 4, fig.cap = cap_text, fig.alt = alt_text}
+source('appendix-graphs.R') 
+p1+p2
+```
+
+```{r t69c}
+source('appendix-tables.R') 
+```

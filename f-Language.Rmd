@@ -1,0 +1,176 @@
+# Language
+
+```{r f01-setup}
+current_topic <- "Language"
+current_topic_table <- topics_big_table %>% 
+  filter(cat_field == current_topic)
+
+for (ijk in 1:nrow(current_topic_table)){
+  cat("- [",current_topic_table$cat_real_name[ijk],"](#t-",current_topic_table$cat_shortcode[ijk],")\n", sep="")
+}
+```
+
+```{r t75a}
+jjj <- 75 
+source('appendix-data.R') 
+temp_dt
+```
+
+```{r t75b, fig.height = 4, fig.cap = cap_text, fig.alt = alt_text}
+source('appendix-graphs.R') 
+p1+p2
+```
+
+```{r t75c}
+source('appendix-tables.R') 
+```
+
+```{r t76a}
+jjj <- 76 
+source('appendix-data.R') 
+temp_dt
+```
+
+```{r t76b, fig.height = 4, fig.cap = cap_text, fig.alt = alt_text}
+source('appendix-graphs.R') 
+p1+p2
+```
+
+```{r t76c}
+source('appendix-tables.R') 
+```
+
+```{r t77a}
+jjj <- 77 
+source('appendix-data.R') 
+temp_dt
+```
+
+```{r t77b, fig.height = 4, fig.cap = cap_text, fig.alt = alt_text}
+source('appendix-graphs.R') 
+p1+p2
+```
+
+```{r t77c}
+source('appendix-tables.R') 
+```
+
+```{r t78a}
+jjj <- 78 
+source('appendix-data.R') 
+temp_dt
+```
+
+```{r t78b, fig.height = 4, fig.cap = cap_text, fig.alt = alt_text}
+source('appendix-graphs.R') 
+p1+p2
+```
+
+```{r t78c}
+source('appendix-tables.R') 
+```
+
+```{r t79a}
+jjj <- 79 
+source('appendix-data.R') 
+temp_dt
+```
+
+```{r t79b, fig.height = 4, fig.cap = cap_text, fig.alt = alt_text}
+source('appendix-graphs.R') 
+p1+p2
+```
+
+```{r t79c}
+source('appendix-tables.R') 
+```
+
+```{r t80a}
+jjj <- 80 
+source('appendix-data.R') 
+temp_dt
+```
+
+```{r t80b, fig.height = 4, fig.cap = cap_text, fig.alt = alt_text}
+source('appendix-graphs.R') 
+p1+p2
+```
+
+```{r t80c}
+source('appendix-tables.R') 
+```
+
+```{r t81a}
+jjj <- 81 
+source('appendix-data.R') 
+temp_dt
+```
+
+```{r t81b, fig.height = 4, fig.cap = cap_text, fig.alt = alt_text}
+source('appendix-graphs.R') 
+p1+p2
+```
+
+```{r t81c}
+source('appendix-tables.R') 
+```
+
+```{r t82a}
+jjj <- 82 
+source('appendix-data.R') 
+temp_dt
+```
+
+```{r t82b, fig.height = 4, fig.cap = cap_text, fig.alt = alt_text}
+source('appendix-graphs.R') 
+p1+p2
+```
+
+```{r t82c}
+source('appendix-tables.R') 
+```
+
+```{r t83a}
+jjj <- 83 
+source('appendix-data.R') 
+temp_dt
+```
+
+```{r t83b, fig.height = 4, fig.cap = cap_text, fig.alt = alt_text}
+source('appendix-graphs.R') 
+p1+p2
+```
+
+```{r t83c}
+source('appendix-tables.R') 
+```
+
+```{r t84a}
+jjj <- 84 
+source('appendix-data.R') 
+temp_dt
+```
+
+```{r t84b, fig.height = 4, fig.cap = cap_text, fig.alt = alt_text}
+source('appendix-graphs.R') 
+p1+p2
+```
+
+```{r t84c}
+source('appendix-tables.R') 
+```
+
+```{r t85a}
+jjj <- 85 
+source('appendix-data.R') 
+temp_dt
+```
+
+```{r t85b, fig.height = 4, fig.cap = cap_text, fig.alt = alt_text}
+source('appendix-graphs.R') 
+p1+p2
+```
+
+```{r t85c}
+source('appendix-tables.R') 
+```
