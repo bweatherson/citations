@@ -1,3 +1,27 @@
+extrafont::loadfonts()
+require(scales)
+require(patchwork)
+
+graph_color <- function(x){
+  case_when(x == "Aesthetics" ~ hcl(h = 15, l = 65, c = 100),
+            x == "Epistemology" ~ hcl(h = 45, l = 65, c = 100),
+            x == "Ethics" ~ hcl(h = 75, l = 65, c = 100),
+            x == "Free Will" ~ hcl(h = 105, l = 65, c = 100),
+            x == "Kant" ~ hcl(h = 135, l = 65, c = 100),
+            x == "Language" ~ hcl(h = 165, l = 65, c = 100),
+            x == "Logic" ~ hcl(h = 195, l = 65, c = 100),
+            x == "Metaphysics" ~ hcl(h = 225, l = 65, c = 100),
+            x == "Mind" ~ hcl(h = 255, l = 65, c = 100),
+            x == "Political" ~ hcl(h = 285, l = 65, c = 100),
+            x == "Science" ~ hcl(h = 315, l = 65, c = 100))
+}
+
+# Plan is to break this up into sections by type
+# So 11 Appendicies - each with subsections
+# Well, some of them only have one subsection
+# But right now the list is too long and unreadable
+# Not sure how to do this in an adjustable way
+
 the_cat <- topics_big_table$cat_num[jjj]
 target_articles <- round_three %>% filter(cat_num == the_cat)
 

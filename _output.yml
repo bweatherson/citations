@@ -16,9 +16,9 @@ bookdown::gitbook:
       github: no
       twitter: yes
       facebook: no
-bookdown::html_chapters:
-  split_by: chapter
-  toc: no
-bookdown::pdf_book:
-  keep_tex: true
-bookdown::epub_book: default
+# bookdown::html_chapters:
+#   split_by: chapter
+#   toc: no
+# bookdown::pdf_book:
+#   keep_tex: true
+# bookdown::epub_book: default
